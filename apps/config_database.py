@@ -19,7 +19,7 @@ def get_db_connection() :
         # Close connection
         # conn.close()
     except (Exception, psycopg2.Error) as error :
-        print ("Erreur lors de la création du table PostgreSQL", error)
+        print ("Erreur lors de la connextion  avec la base de donnée PostgreSQL", error)
         return None
 
 
