@@ -1,35 +1,35 @@
-import datetime
+# import datetime
 
 
 
-date_now = datetime.datetime.now()
-date_diff = date_now - datetime.timedelta(hours=24)
+# date_now = datetime.datetime.now()
+# date_diff = date_now - datetime.timedelta(hours=24)
 
 
-# print(date_diff, date_now )
+# # print(date_diff, date_now )
 
 
 
-# Formater la date
-# formatted_date = date_diff.strftime("%Y-%m-%d %H:%M")
-# Get the current date and time
-date_now = datetime.datetime.now()
+# # Formater la date
+# # formatted_date = date_diff.strftime("%Y-%m-%d %H:%M")
+# # Get the current date and time
+# date_now = datetime.datetime.now()
 
-# Convert the time difference to a formatted string
-formatted_date = date_diff.strftime("%H:%M")
-# Convert formatted_date to datetime object
-formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
-formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
-print(formatted_datetime)
+# # Convert the time difference to a formatted string
+# formatted_date = date_diff.strftime("%H:%M")
+# # Convert formatted_date to datetime object
+# formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
+# formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
+# print(formatted_datetime)
 
-# Parse the date and time string into a datetime object
-date_on = datetime.datetime.strptime("12:58", "%H:%M").time()
-date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
-print(date_on)
+# # Parse the date and time string into a datetime object
+# date_on = datetime.datetime.strptime("12:58", "%H:%M").time()
+# date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
+# print(date_on)
 
-diff_time = formatted_datetime - date_on
-print (datetime.timedelta(hours=0))
-print(diff_time)
+# diff_time = formatted_datetime - date_on
+# print (datetime.timedelta(hours=0))
+# print(diff_time)
 
 
 
@@ -89,3 +89,17 @@ print(diff_time)
 #     print('Requête POST réussie !')
 # else:
 #     print('Échec de la requête POST.')
+
+
+import requests
+
+url = "http://127.0.0.1:5000/alldata?date_int=2023-11-22 12:30&date_end=2023-11-22 12:50"
+
+payload = {}
+headers = {
+  'X-API-KEY': 'votre_cle_api_1'
+}
+
+response = requests.request("GET", url, headers=headers, data=payload)
+
+print(response.text)

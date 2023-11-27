@@ -3,6 +3,7 @@ from flask import Flask, render_template, jsonify, request
 import json
 from apps import post_temp_humidity
 import datetime 
+from apps import config_database
 
 
 
@@ -82,9 +83,58 @@ def data__():
     
     
     if result == True : 
+        config_database.close_db_connection()
         return jsonify({'message': 'Données reçues avec succès'}), 200  # Succès
     else :
         return jsonify({'message': 'Internal Server Error'}),500 # Erreur
+
+
+@app.route("/getdata", methods=['GET'])
+def get_data():
+    api_key = request.headers.get('X-API-KEY')
+    print(api_key)
+    if not api_key:
+        return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+
+    fan_humidity_status = post_temp_humidity.get_last_data()
+    fan_status = fan_humidity_status[0]  # Utiliser l'indice 0 pour la première valeur
+    humidifier_status = fan_humidity_status[1]  # Utiliser l'indice 1 pour la deuxième valeur
+    motor_status = post_temp_humidity.post_stepper_status()
+
+    data_to_send = {
+        'FAN': fan_status,
+        'Humidity': humidifier_status,
+        'Motor': motor_status
+    }
+    return jsonify(data_to_send), 202
+
+
+@app.route("/alldata", methods=['GET'])
+def get_all_data() : 
+
+    api_key = request.headers.get('X-API-KEY')
+    if not api_key:
+        return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+
+    if 'date_int' not in request.args or 'date_end' not in request.args:
+        # return jsonify({'message': 'Missing parameters'}), 400  # Bad Request
+        results = post_temp_humidity.get_all_data(False,False)
+        return jsonify(results), 202
+    else:  
+        date_int = request.args['date_int']
+        date_end = request.args['date_end']
+        
+        try : 
+            date_int = datetime.datetime.strptime(date_int, "%Y-%m-%d %H:%M")
+            date_end = datetime.datetime.strptime(date_end, "%Y-%m-%d %H:%M")
+            print(date_int,date_end)
+            # return jsonify(date_end), 202
+            results = post_temp_humidity.get_all_data(date_int,date_end)
+            return jsonify(results), 202
+        
+        except Exception :
+            return jsonify("Internal serveur error"), 500
+
 
 
 if __name__ == "__main__":
