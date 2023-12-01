@@ -68,34 +68,62 @@ def post_stepper_status():
 
 def get_last_data():
 
-    conn = get_db_connection()
     average_temperature = 0
     average_humidity = 0
     fan_humidity_status = ["OFF", "OFF"]
+    set_temp = 37.3
+    set_humid = 45
+    start_date = ""
+    date_now = datetime.datetime.today()
+    date_diff = ""
 
 
     sql_select_data = """
     SELECT id, average_temperature, average_humidity 
     FROM data_temp ORDER BY id DESC LIMIT 1
     """
+    select_parameter = """
+    SELECT temperatur, humidity, start_date
+    FROM parameter_data ORDER BY id DESC LIMIT 1
+    """
     try : 
         # Créer un curseur pour exécuter la requête SQL
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(sql_select_data)
         # Récupération des résultats
         # Récupération du premier résultat (le dernier enregistrement)
         resultat = cursor.fetchone()
 
+        cursor.execute(select_parameter)
+        resultat_param = cursor.fetchone()
+
+        if resultat_param[0] :
+            set_temp = resultat_param[0]
+        
+        if resultat_param[1] :
+            set_humid = resultat_param[1] 
+        
+        if resultat_param[2] :
+            start_date = resultat_param[2] 
+
+        if start_date : 
+            start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            date_diff = date_now - start_date
+            if date_diff >= datetime.timedelta(days=20):
+            #    set_temp = set_temp - 0.3 
+               set_humid = set_humid + 10
+
         if resultat:
             average_temperature = resultat[1]
             average_humidity = resultat[2]
 
-        if average_temperature >= 37.7 : 
+        if average_temperature >= set_temp : 
             fan_humidity_status[0] = "OFF"
         else:
             fan_humidity_status[0] = "ON"
         
-        if average_humidity >= 45 :
+        if average_humidity >= set_humid :
             fan_humidity_status[1] = "OFF"
         else :
             fan_humidity_status[1] = "ON"
@@ -126,8 +154,9 @@ def get_all_data(date_ini, date_end):
         WHERE date_trunc('minute', date_serveur) BETWEEN %(date_ini)s AND %(date_end)s """
 
     
-    conn = get_db_connection()
+    
     try :
+        conn = get_db_connection()
         cursor = conn.cursor()
         if date_ini and date_end :
             cursor.execute(select_all_data,{'date_ini' : date_ini ,'date_end' : date_end})
@@ -138,8 +167,51 @@ def get_all_data(date_ini, date_end):
             cursor.execute(select_all_data)
          # Récupération des résultats 
             resultats = cursor.fetchall()
+        cursor.close()
+        conn.close()
 
     except Exception as e :
         print("Erreur lors de la récupération des données:", e)
 
     return resultats
+
+
+def create_parameter(data_to_insert):
+
+    sql_insert_param = """
+    INSERT INTO parameter_data (temperature, humidity, start_date,stat_stepper,number_stepper)
+    VALUES (37.5, 45, %(start_date)s,'ON',2)"""
+
+
+    select_parameter = """
+    SELECT id
+    FROM parameter_data ORDER BY id DESC LIMIT 1
+    """
+
+    sql_update_param = """
+        UPDATE parameter_data 
+        SET temperature = :temperature, humidity = :humidity, start_date = :start_date, 
+            stat_stepper = :stat_stepper, number_stepper = :number_stepper 
+        WHERE id = :id
+    """
+    try : 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(select_parameter)
+        id_result = cursor.fetchone()
+
+        if id_result :
+            sql_update_param['id'] = id_result[0]
+            cursor.execute(sql_update_param,data_to_insert)
+            conn.commit()
+        else : 
+            cursor.execute(select_parameter, {'start_date' : datetime.datetime.today()})
+            conn.commit()
+
+        cursor.close()
+        conn.close()
+        return True
+    
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return False
