@@ -12,8 +12,14 @@ app = Flask(__name__)
 # Une liste de dictionnaires de clés API autorisées
 api_keys = [
     {'key': 'votre_cle_api_1'},
-    {'key': 'votre_cle_api_2'}
+    {'key': 'votre_cle_api_2'},
+    {'key': 'Votre_Cle_API'},
+    
 ]
+
+@app.route("/")
+def hello():
+    return "hello"
 
 @app.route("/values" , methods=['POST'])
 def data__():
@@ -53,7 +59,7 @@ def data__():
         num_failed_sensors = int(data['numFailedSensors'])
         
     except Exception : 
-            return jsonify({'message': 'Données manquantes'}), 400  # Mauvaise requête
+            return jsonify({'message': 'Missing data'}), 400  # Mauvaise requête
     
     # Vérifier si les données de température et d'humidité sont présentes
     for sensor_name, sensor_data in data.items():
@@ -65,7 +71,7 @@ def data__():
                 humidity = float(sensor_data['humidity'])
                 temperature = float(sensor_data['temperature'])
             except Exception : 
-                return jsonify({'message': 'Données manquantes'}), 406  # Mauvaise requête
+                return jsonify({'message': 'Missing data'}), 406  # Mauvaise requête
             
             data_to_insert = {
             'sensor': sensor_name,
@@ -84,7 +90,7 @@ def data__():
     
     if result == True : 
         config_database.close_db_connection()
-        return jsonify({'message': 'Données reçues avec succès'}), 200  # Succès
+        return jsonify({'message': 'Data received successfully'}), 200  # Succès
     else :
         return jsonify({'message': 'Internal Server Error'}),500 # Erreur
 
@@ -138,6 +144,6 @@ def get_all_data() :
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run("0.0.0.0",debug=True)
 
 
