@@ -2,6 +2,7 @@
 import psycopg2
 from apps.config_database import *
 import datetime
+import threading
 
 
 # Obtenir la connexion à la base de données
@@ -47,23 +48,64 @@ def add_data(data_to_insert) :
 def post_stepper_status():
 
     stepper = "OFF"
+    number_stepper = 2
+    start_date = ""
+    date_now = datetime.datetime.today()
+    delai = 60 * 60
 
-    date_now = datetime.datetime.now()
-    # Convert the time difference to a formatted string
-    formatted_date = date_now.strftime("%H:%M")
-    # Convert formatted_date to datetime object
-    formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
-    formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
+    select_parameter = """
+    SELECT   stat_stepper,number_stepper
+    FROM parameter_data ORDER BY id DESC LIMIT 1
+    """
 
-    # Convert formatted_date to datetime object
-    date_on = datetime.datetime.strptime("06:00", "%H:%M").time()
-    date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
+    def default_() :
+        date_now = datetime.datetime.now()
+        # Convert the time difference to a formatted string
+        formatted_date = date_now.strftime("%H:%M")
+        # Convert formatted_date to datetime object
+        formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
+        formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
+
+        # Convert formatted_date to datetime object
+        date_on = datetime.datetime.strptime("06:00", "%H:%M").time()
+        date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
+        
+        # Calculate the time difference
+        diff_time = formatted_datetime - date_on
+        if diff_time == datetime.timedelta(hours=0) :
+            stepper = "ON"
     
-    # Calculate the time difference
-    diff_time = formatted_datetime - date_on
-    if diff_time == datetime.timedelta(hours=0) :
+    def stepper_on():
         stepper = "ON"
-    
+
+    try :
+        # Créer un curseur pour exécuter la requête SQL
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(select_parameter)
+        # Récupération des résultats
+        # Récupération du premier résultat (le dernier enregistrement)
+        resultat = cursor.fetchone()
+        if resultat :
+            stepper = resultat[0]
+            number_stepper = resultat[1]
+            start_date = resultat[2]
+
+        if start_date :
+            start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            date_diff = date_now - start_date
+            if date_diff >= datetime.timedelta(days=20):
+                stepper = "OFF"
+            else : 
+                if  stepper == "ON" :
+                    delai = delai * number_stepper
+                    if  number_stepper > 0 :
+                        thread = threading.Timer(delai, stepper_on)
+                        thread.start() # Lancer le thread
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+        stepper = "OFF"
+
     return stepper
 
 def get_last_data():
@@ -102,7 +144,7 @@ def get_last_data():
             set_temp = resultat_param[0]
         
         if resultat_param[1] :
-            set_humid = resultat_param[1] 
+            set_humid = resultat[1] 
         
         if resultat_param[2] :
             start_date = resultat_param[2] 
@@ -134,8 +176,8 @@ def get_last_data():
     except Exception as e:
         print("Erreur lors de la récupération des données:", e)
 
- 
     return fan_humidity_status
+
 
 
 def get_all_data(date_ini, date_end):
@@ -151,9 +193,7 @@ def get_all_data(date_ini, date_end):
         select_all_data = """
         SELECT * 
         FROM data_mp
-        WHERE date_trunc('minute', date_serveur) BETWEEN %(date_ini)s AND %(date_end)s """
-
-    
+        WHERE date_trunc('minute', date_serveur) BETWEEN %(date_ini)s AND %(date_end)s """   
     
     try :
         conn = get_db_connection()
