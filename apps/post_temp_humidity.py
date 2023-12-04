@@ -47,6 +47,7 @@ def add_data(data_to_insert) :
 
 def post_stepper_status():
 
+    # global stepper
     stepper = "OFF"
     number_stepper = 2
     start_date = ""
@@ -87,9 +88,13 @@ def post_stepper_status():
         diff_time = formatted_datetime - date_on
         if diff_time >= datetime.timedelta(hours=0) and diff_time <= datetime.timedelta(hours=0, minutes= 2):
             stepper = "ON"
+        else : 
+            stepper = "OFF"
+        return stepper
     
     def stepper_on():
         stepper = "ON"
+        return stepper
 
     try :
         # Créer un curseur pour exécuter la requête SQL
@@ -128,9 +133,9 @@ def post_stepper_status():
                         # thread = threading.Timer(delai, stepper_on)
                         # thread.start() # Lancer le thread
                         if stepper_date :
-                            default_(stepper_date)
+                            stepper = default_(stepper_date)
                         else :
-                            default_()
+                            stepper = default_()
                         # Définir l'heure de départ
                         heure_depart = datetime.datetime.strptime(stepper_date, '%H:%M:%S').time()
                         # Ajouter des heures
