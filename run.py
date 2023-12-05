@@ -40,7 +40,7 @@ def data__():
 
 
     api_key = request.headers.get('X-API-KEY')
-    print(api_key)
+    # print(api_key)
 
 
     if not api_key:
@@ -141,6 +141,57 @@ def get_all_data() :
         except Exception :
             return jsonify("Internal serveur error"), 500
 
+@app.route("/parameter", methods=['GET','POST'])
+def create_parameter() : 
+
+    temperature = 0
+    humidity = 0
+    start_date = datetime.datetime.today() 
+    stat_stepper = "OFF"
+    number_stepper = 2
+    data = request.json
+    result = False
+
+    api_key = request.headers.get('X-API-KEY')
+    # print(api_key)
+
+    if not api_key:
+        return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+
+
+    if not any(api['key'] == api_key for api in api_keys):
+        return jsonify({'message': 'Clé API non valide'}), 401  # Non autorisé
+    
+    if request.method == 'POST':
+        try :
+            temperature = float(data['temperature'])
+            humidity = float(data['humidity'])
+            start_date = data['start_date']
+            stat_stepper = data['stat_stepper']
+            number_stepper = data['number_stepper']
+
+        except Exception : 
+            return jsonify({'message': 'Missing data'}), 400  # Mauvaise requête
+        
+        data_to_insert = {
+            'temperature' : temperature,
+            'humidity' : humidity,
+            'start_date' : start_date,
+            'stat_stepper' : stat_stepper,
+            'number_stepper' : number_stepper
+        }
+
+        post_temp_humidity.create_parameter(data_to_insert)
+        if result == True : 
+            config_database.close_db_connection()
+            return jsonify({'message': 'Data received successfully'}), 200  # Succès
+        else :
+            return jsonify({'message': 'Internal Server Error'}),500 # Erreur
+        
+    else:
+        result = post_temp_humidity.get_parameter()
+        return jsonify(result), 202 # Succès
+        
 
 
 if __name__ == "__main__":
