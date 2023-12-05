@@ -261,9 +261,10 @@ def get_all_data(date_ini, date_end):
     return resultats
 
 
-def create_parameter(data_to_insert):
+def create_parameter(data_to_insert = None):
 
     date_now = datetime.datetime.today()
+    
 
     sql_insert_param = """
     INSERT INTO parameter_data (temperature, humidity, start_date,stat_stepper,number_stepper)
@@ -300,7 +301,7 @@ def create_parameter(data_to_insert):
             cursor.execute(sql_update_param,data_to_insert)
             conn.commit()
         else : 
-            cursor.execute(select_parameter, {'start_date' : datetime.datetime.today()})
+            cursor.execute(sql_insert_param, {'start_date' : datetime.datetime.today()})
             conn.commit()
 
         if id_stepper :
@@ -321,7 +322,7 @@ def create_parameter(data_to_insert):
             conn.commit
         else :
             insert_stepper['start_date'] = datetime.timedelta(hours=6)
-            insert_stepper['status'] = data_to_insert['status']
+            insert_stepper['status'] = "ON"
             cursor.execute(insert_stepper)
             conn.commit
 
@@ -332,3 +333,51 @@ def create_parameter(data_to_insert):
     except Exception as e:
         print(f"Error occurred: {e}")
         return False
+    
+def get_parameter() :
+
+    select_parameter = """
+        SELECT id, temperature, humidity, start_date,stat_stepper,number_stepper 
+        FROM parameter_data ORDER BY id DESC LIMIT 1 """
+    
+    # select_stepper = """ SELECT id, start_date, status FROM stepper ORDER BY id DESC LIMIT 1 """
+
+    result = {
+                'id': 1,
+                'temperature': 37.5,
+                'humidity': 40,
+                'start_date': str(datetime.datetime.today()),
+                'stat_stepper': "OFF",
+                'number_stepper': 2
+            }
+
+    try : 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(select_parameter)
+        id_result = cursor.fetchone()
+        result = ""
+
+        # cursor.execute(select_stepper)
+        # id_stepper = cursor.fetchone()
+        
+        # Création du dictionnaire JSON
+        if id_result  :
+            result = {
+                'id': id_result[0],
+                'temperature': id_result[1],
+                'humidity': id_result[2],
+                'start_date': str(id_result[3]),
+                'stat_stepper': id_result[4],
+                'number_stepper': id_result[5]
+            }
+        
+        else : 
+            create_parameter()
+
+        cursor.close()
+        conn.close()
+    except Exception as e :
+        print("Erreur lors de la récupération des données:", e)
+
+    return result

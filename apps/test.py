@@ -146,3 +146,9 @@ if  test_timedelta > datetime.timedelta(hours=6) :
 else : 
      print("rrrrrrrrrrrrr")
 
+
+cursor.execute(select_parameter)
+id_result = cursor.fetchone()
+
+cursor.execute(select_stepper)
+id_stepper = cursor.fetchone()
