@@ -9,6 +9,23 @@ conn = get_db_connection()
 
 def add_data(data_to_insert) :
 
+    # Définir la requête SQL pour créer la table
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS data_temp (
+        id SERIAL PRIMARY KEY,
+        sensor VARCHAR(100),
+        temperature VARCHAR(100),
+        humidity REAL,
+        date_serveur TIMESTAMP WITHOUT TIME ZONE,
+        average_temperature REAL,
+        average_humidity REAL, 
+        fan_status VARCHAR(100),
+        humidifier_status VARCHAR(100),
+        numfailedsensors INT
+    )
+    """
+
+
     # Requête SQL pour l'insertion des données sans spécifier l'identifiant (id)
     sql_insert_query = """
         INSERT INTO data_temp (sensor, temperature, humidity, date_serveur, average_temperature, 
@@ -29,6 +46,7 @@ def add_data(data_to_insert) :
         # Créer un curseur pour exécuter la requête SQL
         with conn.cursor() as cursor:
             # Exécuter la requête SQL avec les données à insérer
+            cursor.execute(create_table_query)
             cursor.execute(sql_insert_query, data_to_insert)
 
         # Valider les modifications dans la base de données
