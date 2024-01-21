@@ -8,9 +8,69 @@ import threading
 # Obtenir la connexion à la base de données
 # conn = get_db_connection()
 
+def create_table():
+
+    # Définir la requête SQL pour créer la table
+    create_table_data_temp = """
+    CREATE TABLE IF NOT EXISTS data_temp (
+        id SERIAL PRIMARY KEY,
+        sensor VARCHAR(100),
+        temperature REAL,
+        humidity REAL,
+        date_serveur TIMESTAMP WITHOUT TIME ZONE,
+        average_temperature REAL,
+        average_humidity REAL, 
+        fan_status VARCHAR(100),
+        humidifier_status VARCHAR(100),
+        numfailedsensors INT
+    )
+    """
+
+    create_table_parameter_data = """
+    CREATE TABLE IF NOT EXISTS parameter_data (
+        id SERIAL PRIMARY KEY,
+        temperature REAL,
+        humidity REAL,
+        start_date TIMESTAMP WITHOUT TIME ZONE,
+        stat_stepper VARCHAR(100),
+        number_stepper INT
+    )
+    """
+
+    create_table_stepper = """
+    CREATE TABLE IF NOT EXISTS parameter_data (
+        id SERIAL PRIMARY KEY,
+        start_date TIMESTAMP WITHOUT TIME ZONE,
+        status VARCHAR(100)
+    )
+    """
+
+        
+    try:
+        conn = get_db_connection()
+        # Créer un curseur pour exécuter la requête SQL
+        with conn.cursor() as cursor:
+            # Exécuter la requête SQL création des tables
+            cursor.execute(create_table_data_temp)
+            cursor.execute(create_table_parameter_data)
+            cursor.execute(create_table_stepper)
+
+        # Valider les modifications dans la base de données
+        conn.commit()
+        print("la creation des table dans la base est fait avec succès")
+        return True
+    except psycopg2.Error as e:
+        print("Erreur lors de la création des tables:", e)
+        return False
+
+
+
 def add_data(data_to_insert) :
 
     conn = get_db_connection()
+    create_table()
+
+
     # Requête SQL pour l'insertion des données sans spécifier l'identifiant (id)
     sql_insert_query = """
         INSERT INTO data_temp (sensor, temperature, humidity, date_serveur, average_temperature, 
@@ -46,6 +106,8 @@ def add_data(data_to_insert) :
 
 
 def post_stepper_status():
+
+    create_table()
 
     # global stepper
     stepper = "OFF"
@@ -155,6 +217,8 @@ def post_stepper_status():
 
 def get_last_data():
 
+    create_table()
+
     average_temperature = 0
     average_humidity = 0
     fan_humidity_status = ["OFF", "OFF"]
@@ -227,6 +291,8 @@ def get_last_data():
 
 def get_all_data(date_ini, date_end):
 
+    create_table()
+
     conn = get_db_connection()
     resultats = []
     select_all_data = """
@@ -237,7 +303,7 @@ def get_all_data(date_ini, date_end):
     if date_ini or date_end : 
         select_all_data = """
         SELECT * 
-        FROM data_mp
+        FROM data_temp
         WHERE date_trunc('minute', date_serveur) BETWEEN %(date_ini)s AND %(date_end)s """   
     
     try :
@@ -263,6 +329,8 @@ def get_all_data(date_ini, date_end):
 
 def create_parameter(data_to_insert = None):
 
+    create_table()
+
     date_now = datetime.datetime.today()
     
 
@@ -285,7 +353,7 @@ def create_parameter(data_to_insert = None):
 
     select_stepper = """ SELECT id, start_date, status FROM stepper ORDER BY id DESC LIMIT 1 """
     update_stepper = """UPDATE stepper SET start_date = :start_date, status = :status WHERE id = :id """
-    insert_stepper = """INSERT INTO stepper VALUES (:start_date, :status)"""
+    insert_stepper = """INSERT INTO stepper (start_date, status) VALUES (:start_date, :status)"""
 
     try : 
         conn = get_db_connection()
@@ -335,6 +403,8 @@ def create_parameter(data_to_insert = None):
         return False
     
 def get_parameter() :
+
+    create_table()
 
     select_parameter = """
         SELECT id, temperature, humidity, start_date,stat_stepper,number_stepper 
