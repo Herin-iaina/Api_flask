@@ -38,7 +38,7 @@ def create_table():
     """
 
     create_table_stepper = """
-    CREATE TABLE IF NOT EXISTS parameter_data (
+    CREATE TABLE IF NOT EXISTS stepper (
         id SERIAL PRIMARY KEY,
         start_date TIMESTAMP WITHOUT TIME ZONE,
         status VARCHAR(100)
