@@ -147,8 +147,3 @@ else :
      print("rrrrrrrrrrrrr")
 
 
-cursor.execute(select_parameter)
-id_result = cursor.fetchone()
-
-cursor.execute(select_stepper)
-id_stepper = cursor.fetchone()
