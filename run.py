@@ -19,6 +19,8 @@ api_keys = [
 
 @app.route("/")
 def hello():
+    api_key = request.headers.get('X-API-KEY')
+    print(api_key)
     return "hello"
 
 @app.route("/values" , methods=['POST'])
@@ -140,30 +142,34 @@ def get_all_data() :
         
         except Exception :
             return jsonify("Internal serveur error"), 500
-
-@app.route("/parameter", methods=['GET','POST'])
-def create_parameter() : 
+        
+        
+@app.route("/test", methods=['GET','POST'])
+def hellopo():
+    api_key = request.headers.get('X-API-KEY')
+    # print(api_key)
 
     temperature = 0
     humidity = 0
     start_date = datetime.datetime.today() 
     stat_stepper = "OFF"
     number_stepper = 2
-    data = request.json
     result = False
 
-    api_key = request.headers.get('X-API-KEY')
-    # print(api_key)
+ 
 
     if not api_key:
         return jsonify({'message': 'API key missing'}), 401  # Unauthorized
 
 
-    if not any(api['key'] == api_key for api in api_keys):
-        return jsonify({'message': 'Clé API non valide'}), 401  # Non autorisé
+    # if not any(api['key'] == api_key for api in api_keys):
+    #     return jsonify({'message': 'Clé API non valide'}), 401  # Non autorisé
+    
+    # print(request.method)
     
     if request.method == 'POST':
         try :
+            data = request.json
             temperature = float(data['temperature'])
             humidity = float(data['humidity'])
             start_date = data['start_date']
@@ -190,7 +196,8 @@ def create_parameter() :
         
     else:
         result = post_temp_humidity.get_parameter()
-        return jsonify(result), 202 # Succès
+        result = jsonify(result)
+        return result, 202 # Succès
         
 
 

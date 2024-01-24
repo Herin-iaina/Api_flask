@@ -234,7 +234,7 @@ def get_last_data():
     FROM data_temp ORDER BY id DESC LIMIT 1
     """
     select_parameter = """
-    SELECT temperatur, humidity, start_date
+    SELECT temperature, humidity, start_date
     FROM parameter_data ORDER BY id DESC LIMIT 1
     """
     try : 
@@ -365,6 +365,8 @@ def create_parameter(data_to_insert = None):
         id_stepper = cursor.fetchone()
 
         if id_result :
+
+            # il faut verifier si la date est valide ///// to do 
             sql_update_param['id'] = id_result[0]
             cursor.execute(sql_update_param,data_to_insert)
             conn.commit()
