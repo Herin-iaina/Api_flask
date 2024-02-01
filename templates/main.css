@@ -1,0 +1,227 @@
+ .u-section-1 {
+  background-image: none;
+}
+
+.u-section-1 .u-sheet-1 {
+  min-height: 133px;
+}
+
+.u-section-1 .u-form-1 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  height: 103px;
+}
+
+.u-section-1 .u-form-group-1 {
+  margin-left: 0;
+}
+
+.u-section-1 .u-label-1 {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.u-section-1 .u-input-1 {
+  font-weight: 600;
+  --radius: 15px;
+}
+
+.u-section-1 .u-form-group-2 {
+  margin-left: 0;
+}
+
+.u-section-1 .u-label-2 {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.u-section-1 .u-input-2 {
+  font-weight: 600;
+  --radius: 15px;
+}
+
+.u-section-1 .u-form-group-3 {
+  margin-left: 0;
+}
+
+.u-section-1 .u-label-3 {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.u-section-1 .u-input-3 {
+  font-weight: 600;
+  --radius: 15px;
+}
+
+.u-section-1 .u-form-group-4 {
+  margin-left: 0;
+}
+
+.u-section-1 .u-label-4 {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.u-section-1 .u-input-4 {
+  font-weight: 600;
+  --radius: 15px;
+}
+
+.u-section-1 .u-btn-1 {
+  --radius: 19px;
+} .u-section-2 {
+  /* background-image: linear-gradient(#478ac9, #2cccc4); #292e33) */
+  background-image: linear-gradient(#292e33,#292e33);
+}
+
+.u-section-2 .u-sheet-1 {
+  min-height: 144px;
+}
+
+.u-section-2 .u-list-1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.u-section-2 .u-repeater-1 {
+  grid-template-columns: 25% 25% 25% 25%;
+  grid-gap: 0px 0px;
+  min-height: 134px;
+}
+
+.u-section-2 .u-image-1 {
+  background-image: url("images/1_19.png");
+}
+
+.u-section-2 .u-container-layout-1 {
+  padding: 0 10px;
+}
+
+.u-section-2 .u-image-2 {
+  background-image: url("images/1_19.png");
+}
+
+.u-section-2 .u-container-layout-2 {
+  padding: 0 10px;
+}
+
+.u-section-2 .u-image-3 {
+  background-image: url("images/vecteezy_thermometer-icon-temperature-icon-isolated-on-white_7500756.png");
+}
+
+.u-section-2 .u-container-layout-3 {
+  padding: 0 10px;
+}
+
+.u-section-2 .u-image-4 {
+  background-image: url("images/vecteezy_thermometer-icon-temperature-icon-isolated-on-white_7500756.png");
+}
+
+.u-section-2 .u-container-layout-4 {
+  padding: 0 10px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-2 .u-repeater-1 {
+    grid-template-columns: repeat(4, 25%);
+    min-height: 111px;
+  }
+}
+
+@media (max-width: 991px) {
+  .u-section-2 .u-repeater-1 {
+    grid-template-columns: repeat(2, 50%);
+    min-height: 340px;
+  }
+}
+
+@media (max-width: 767px) {
+  .u-section-2 .u-repeater-1 {
+    grid-template-columns: 100%;
+  }
+} .u-section-3 {
+  background-image: none;
+}
+
+.u-section-3 .u-sheet-1 {
+  min-height: 505px;
+}
+
+.u-section-3 .u-group-1 {
+  min-height: 479px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  height: auto;
+}
+
+.u-section-3 .u-container-layout-1 {
+  padding: 30px;
+}
+
+.u-section-3 .u-btn-1 {
+  --radius: 3px;
+  border-style: solid;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  box-shadow: 0px 2px 6px 0 rgba(0,0,0,0.25);
+  margin: 0 auto 0 0;
+  padding: 3px 27px 3px 26px;
+}
+
+.u-section-3 .u-icon-1 {
+  font-size: 0.7em;
+}
+
+@media (max-width: 1199px) {
+  .u-section-3 .u-group-1 {
+    min-height: 450px;
+    margin-top: 47px;
+    height: auto;
+  }
+
+  .u-section-3 .u-container-layout-1 {
+    padding-top: 0;
+  }
+
+  .u-section-3 .u-btn-1 {
+    margin-top: 1px;
+  }
+}
+
+@media (max-width: 767px) {
+  .u-section-3 .u-container-layout-1 {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+} .u-section-4 {
+  background-image: none;
+}
+
+.u-section-4 .u-sheet-1 {
+  min-height: 400px;
+}
+
+.u-section-4 .u-group-1 {
+  min-height: 383px;
+  margin-top: 9px;
+  margin-bottom: 8px;
+  height: auto;
+}
+
+.u-section-4 .u-container-layout-1 {
+  padding: 30px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-4 .u-group-1 {
+    height: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .u-section-4 .u-container-layout-1 {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
