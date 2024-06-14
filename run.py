@@ -165,7 +165,7 @@ def hellopo():
     # if not any(api['key'] == api_key for api in api_keys):
     #     return jsonify({'message': 'Clé API non valide'}), 401  # Non autorisé
     
-    # print(request.method)
+    print(request.method)
     
     if request.method == 'POST':
         try :

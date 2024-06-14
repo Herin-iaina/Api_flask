@@ -91,64 +91,64 @@ date_now = datetime.datetime.today() # datetime.datetime.now()
 #     print('Échec de la requête POST.')
 
 
-# Définir l'heure de départ
-heure_depart = datetime.datetime.strptime('06:00:00', '%H:%M:%S').time()
+# # Définir l'heure de départ
+# heure_depart = datetime.datetime.strptime('06:00:00', '%H:%M:%S').time()
 
-# Ajouter 2 heures
-heure_depart_dt = datetime.datetime.combine(datetime.datetime.today(), heure_depart)
-heure_arrivee = heure_depart_dt + datetime.timedelta(hours=12.15)
+# # Ajouter 2 heures
+# heure_depart_dt = datetime.datetime.combine(datetime.datetime.today(), heure_depart)
+# heure_arrivee = heure_depart_dt + datetime.timedelta(hours=12.15)
 
-# Afficher l'heure d'arrivée
-print(heure_arrivee.time(), 'ggggghhhhh')
-test = heure_arrivee.time()
+# # Afficher l'heure d'arrivée
+# print(heure_arrivee.time(), 'ggggghhhhh')
+# test = heure_arrivee.time()
 
 
-def default_(date_on = None) :
-        stepper = "OFF"
-        date_now = datetime.datetime.now()
-        # Convert the time difference to a formatted string
-        formatted_date = date_now.strftime("%H:%M")
-        print("formatted_date", formatted_date)
-        # Convert formatted_date to datetime object
-        formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
-        formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
+# def default_(date_on = None) :
+#         stepper = "OFF"
+#         date_now = datetime.datetime.now()
+#         # Convert the time difference to a formatted string
+#         formatted_date = date_now.strftime("%H:%M")
+#         print("formatted_date", formatted_date)
+#         # Convert formatted_date to datetime object
+#         formatted_datetime = datetime.datetime.strptime(formatted_date, "%H:%M").time()
+#         formatted_datetime = datetime.datetime.combine(datetime.datetime.min, formatted_datetime)
 
-        print("formatted_date 1 :", formatted_date)
+#         print("formatted_date 1 :", formatted_date)
 
-        # Convert formatted_date to datetime object
-        if not date_on :
-            date_on = datetime.datetime.strptime("06:00", "%H:%M").time()
-        else :
-             date_on = date_on.strftime("%H:%M")
-             print("date_on A", date_on)
-             date_on = datetime.datetime.strptime(date_on, "%H:%M").time()
-             print("date_on B", date_on)
-             date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
+#         # Convert formatted_date to datetime object
+#         if not date_on :
+#             date_on = datetime.datetime.strptime("06:00", "%H:%M").time()
+#         else :
+#              date_on = date_on.strftime("%H:%M")
+#              print("date_on A", date_on)
+#              date_on = datetime.datetime.strptime(date_on, "%H:%M").time()
+#              print("date_on B", date_on)
+#              date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
 
-        # date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
+#         # date_on = datetime.datetime.combine(datetime.datetime.min, date_on)
 
-        print("date_on", date_on)
+#         print("date_on", date_on)
         
-        # Calculate the time difference
-        diff_time = formatted_datetime - date_on
-        print(diff_time,"ggggg", datetime.timedelta(hours=0, minutes= 2), datetime.timedelta(hours=0))
-        if diff_time >= datetime.timedelta(hours=0) and diff_time <= datetime.timedelta(hours=0, minutes= 2) :
-            stepper = "ON"
-        return stepper
+#         # Calculate the time difference
+#         diff_time = formatted_datetime - date_on
+#         print(diff_time,"ggggg", datetime.timedelta(hours=0, minutes= 2), datetime.timedelta(hours=0))
+#         if diff_time >= datetime.timedelta(hours=0) and diff_time <= datetime.timedelta(hours=0, minutes= 2) :
+#             stepper = "ON"
+#         return stepper
 
 
-test_timedelta = datetime.timedelta(hours=date_now.hour, minutes=date_now.minute, seconds=date_now.second)
+# test_timedelta = datetime.timedelta(hours=date_now.hour, minutes=date_now.minute, seconds=date_now.second)
 
-print(test_timedelta,"xxxxxx", datetime.timedelta(hours=6), datetime.timedelta(hours=12), datetime.timedelta(hours=18), datetime.timedelta(hours=0))
+# print(test_timedelta,"xxxxxx", datetime.timedelta(hours=6), datetime.timedelta(hours=12), datetime.timedelta(hours=18), datetime.timedelta(hours=0))
 
-if  test_timedelta > datetime.timedelta(hours=6) :
-     print("ggggggg")
-else : 
-     print("rrrrrrrrrrrrr")
+# if  test_timedelta > datetime.timedelta(hours=6) :
+#      print("ggggggg")
+# else : 
+#      print("rrrrrrrrrrrrr")
 
 
-cursor.execute(select_parameter)
-id_result = cursor.fetchone()
+# cursor.execute(select_parameter)
+# id_result = cursor.fetchone()
 
-cursor.execute(select_stepper)
-id_stepper = cursor.fetchone()
+# cursor.execute(select_stepper)
+# id_stepper = cursor.fetchone()
