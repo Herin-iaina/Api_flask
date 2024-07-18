@@ -19,7 +19,9 @@ api_keys = [
 
 @app.route("/")
 def hello():
-    return "hello"
+    # return "hello"
+    return render_template('main.html')
+
 
 @app.route("/values" , methods=['POST'])
 def data__():
@@ -195,6 +197,6 @@ def create_parameter() :
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0",debug=True)
+    app.run("0.0.0.0",debug=True, port= 5005)
 
 

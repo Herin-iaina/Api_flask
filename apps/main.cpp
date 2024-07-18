@@ -18,7 +18,7 @@
 
 // WiFi credentials
 const char* ssid = "Airbox-4D56";
-const char* password = "16017581";
+const char* password = "1234567";
 
 // Server URL and endpoint
 const char* serverURL = "http://example.com";
