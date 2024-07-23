@@ -1,8 +1,11 @@
-import network
-import ujson
-from machine import Pin, PWM
+import machine
+import dht
+from machine import Pin
+from time import sleep
+import urequests
 
-# Pin Definitions (adjust based on your board)
+# Pin Definitions
+DHT_SENSOR_TYPE = dht.DHT22
 DHT_1_PIN_DATA = 0
 DHT_2_PIN_DATA = 2
 DHT_3_PIN_DATA = 4
@@ -12,38 +15,90 @@ STEPPER_PIN_2 = 13
 FAN_PIN = 14
 HUMIDIFIER_PIN = 15
 
-# Function definitions for WiFi, JSON, stepper motor, and DHT sensor
-# Replace with equivalent MicroPython code or libraries
+# Initialize DHT sensors
+dht1 = dht.DHT22(Pin(DHT_1_PIN_DATA))
+dht2 = dht.DHT22(Pin(DHT_2_PIN_DATA))
+dht3 = dht.DHT22(Pin(DHT_3_PIN_DATA))
+dht4 = dht.DHT22(Pin(DHT_4_PIN_DATA))
 
-def connect_wifi(ssid, password):
-    # Replace with your WiFi connection logic
-    station = network.WLAN(network.STA_IF)
-    station.active(True)
-    station.connect(ssid, password)
-    while station.isconnected() == False:
-        pass
-    print('Connection successful')
-    print(station.ifconfig())
+# Initialize stepper motor
+stepper1 = machine.AX12(Pin(STEPPER_PIN_1), Pin(STEPPER_PIN_2))
 
-def read_dht_sensor(pin):
-    # Replace with DHT sensor reading logic
-    # Consider using a dedicated DHT library if available
-    pass
+# Initialize fan and humidifier
+fan = Pin(FAN_PIN, Pin.OUT)
+humidifier = Pin(HUMIDIFIER_PIN, Pin.OUT)
 
-def control_stepper(steps):
-    # Replace with stepper motor control logic
-    # Consider using a stepper motor library if available
-    pass
+# Read temperature and humidity from DHT sensors
+def read_dht(sensor):
+    sensor.measure()
+    return sensor.temperature(), sensor.humidity()
 
-def control_fan(speed):
-    # Assuming FAN_PIN is connected to a PWM pin
-    fan_pwm = PWM(Pin(FAN_PIN))
-    fan_pwm.duty_u16(int(speed * 65535 / 100))
 
-def control_humidifier(state):
-    humidifier_pin = Pin(HUMIDIFIER_PIN, Pin.OUT)
-    humidifier_pin.value(state)
 
-# Example usage
-connect_wifi("your_ssid", "your_password")
-# ... rest of your code
+# Initialiser les paramètres
+serverIP = "192.168.1.100"  # Remplacez par l'adresse IP de votre serveur
+serverPort = 8080  # Remplacez par le port de votre serveur
+apiKey = "votre_clé_API"  # Remplacez par votre clé API
+jsonPayload = {
+    "sensor_1": {
+        "humidity": humidity_1,
+        "temperature": temperature_1
+    },
+    # Ajoutez les autres capteurs et valeurs ici
+    # ...
+}
+
+# Convertir la charge utile en chaîne JSON
+jsonPayloadStr = ujson.dumps(jsonPayload)
+
+# Envoyer la requête POST
+try:
+    response = urequests.post(f"http://{serverIP}:{serverPort}/data",
+                             headers={"Content-Type": "application/json", "x-api-key": apiKey},
+                             data=jsonPayloadStr)
+    print("Code de réponse HTTP :", response.status_code)
+    print("Réponse du serveur :", response.text)
+except Exception as e:
+    print("Erreur lors de la requête HTTP :", e)
+
+
+
+def send_sensor_data(serverIP, serverPort, apiKey, sensor_data):
+    try:
+        # Convertir la charge utile en chaîne JSON
+        jsonPayloadStr = ujson.dumps(sensor_data)
+
+        # Envoyer la requête POST
+        response = urequests.post(f"http://{serverIP}:{serverPort}/data",
+                                 headers={"Content-Type": "application/json", "x-api-key": apiKey},
+                                 data=jsonPayloadStr)
+        print("Code de réponse HTTP :", response.status_code)
+        print("Réponse du serveur :", response.text)
+    except Exception as e:
+        print("Erreur lors de la requête HTTP :", e)
+
+# Exemple d'utilisation
+serverIP = "192.168.1.100"  # Remplacez par l'adresse IP de votre serveur
+serverPort = 8080  # Remplacez par le port de votre serveur
+apiKey = "votre_clé_API"  # Remplacez par votre clé API
+sensor_data = {
+    "sensor_1": {
+        "humidity": humidity_1,
+        "temperature": temperature_1
+    },
+    # Ajoutez les autres capteurs et valeurs ici
+    # ...
+}
+
+send_sensor_data(serverIP, serverPort, apiKey, sensor_data)
+
+
+while True:
+    temp1, hum1 = read_dht(dht1)
+    temp2, hum2 = read_dht(dht2)
+    temp3, hum3 = read_dht(dht3)
+    temp4, hum4 = read_dht(dht4)
+
+    # Your logic for controlling the stepper motor, fan, and humidifier goes here
+
+    sleep(2)  # Delay for 2 seconds
