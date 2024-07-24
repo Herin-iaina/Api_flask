@@ -92,6 +92,15 @@ sensor_data = {
 
 send_sensor_data(serverIP, serverPort, apiKey, sensor_data)
 
+if fanStatus == "ON":
+    # Turn on fan
+    machine.Pin(FAN_PIN, machine.Pin.OUT).value(1)
+    fanOn = True
+else:
+    # Turn off fan
+    machine.Pin(FAN_PIN, machine.Pin.OUT).value(0)
+    fanOn = False
+
 
 while True:
     temp1, hum1 = read_dht(dht1)
@@ -102,3 +111,10 @@ while True:
     # Your logic for controlling the stepper motor, fan, and humidifier goes here
 
     sleep(2)  # Delay for 2 seconds
+
+
+    # Assuming you have a variable 'fanStatus' that holds the fan status ("ON" or "OFF")
+# and a pin number for the fan (e.g., FAN_PIN)
+
+
+

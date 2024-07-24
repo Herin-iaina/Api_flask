@@ -26,6 +26,16 @@ dht2 = dht.DHT22(Pin(DHT_2_PIN_DATA))
 dht3 = dht.DHT22(Pin(DHT_3_PIN_DATA))
 dht4 = dht.DHT22(Pin(DHT_4_PIN_DATA))
 
+# Create a Pin object for the fan pin
+fan_pin = machine.Pin(FAN_PIN, machine.Pin.OUT)
+# Initial fan state
+fan_on = False
+
+# Create a Pin object for the humidifier pin
+humidifier_pin = machine.Pin(HUMIDIFIER_PIN, machine.Pin.OUT)
+# Initial humidifier state
+humidifier_on = False
+
 numFailedSensors = 0
 avgFailedSensors = 0
 avgTemperature = 0
@@ -177,14 +187,87 @@ def control_stepper(motor_status):
         s1.stop()
         s1.target(0)
 
-def control_fan(speed):
-    # Assuming FAN_PIN is connected to a PWM pin
-    fan_pwm = PWM(Pin(FAN_PIN))
-    fan_pwm.duty_u16(int(speed * 65535 / 100))
+def control_fan(fan_status):
+    # # Assuming FAN_PIN is connected to a PWM pin
+    # fan_pwm = PWM(Pin(FAN_PIN))
+    # fan_pwm.duty_u16(int(speed * 65535 / 100))
+    global fan_on  # Access the global fan_on variable
 
-def control_humidifier(state):
-    humidifier_pin = Pin(HUMIDIFIER_PIN, Pin.OUT)
-    humidifier_pin.value(state)
+    if fan_status == "ON":
+        fan_pin.value(1)  # Turn on fan
+        fan_on = True
+    else:
+        fan_pin.value(0)  # Turn off fan
+        fan_on = False
+
+
+
+def control_humidifier(humidity_status):
+    # humidifier_pin = Pin(HUMIDIFIER_PIN, Pin.OUT)
+    # humidifier_pin.value(state)
+    global humidifier_on  # Access the global humidifier_on variable
+
+    if humidity_status == "ON":
+        humidifier_pin.value(1)  # Turn on humidifier
+        humidifier_on = True
+    else:
+        humidifier_pin.value(0)  # Turn off humidifier
+        humidifier_on = False
+
+
+def get_data(serverIP, serverPort, apiKey):
+    try :
+        url = "http://" + str(serverIP) + ":" + str(serverPort) + "/getdata"
+        # Effectuer la requête HTTP
+        response = urequests.get(url)
+        if response.status_code == 200:
+                data = response.json()
+                motor_status = data['Motor']
+                fan_status = data['FAN']
+                humidity_status = data['Humidity']
+
+                # Control devices based on received data
+                control_stepper(motor_status)
+                control_fan(fan_status)
+                control_humidifier(humidity_status)
+        else:
+                print(f"HTTP request failed: {response.status_code}")
+                # Handle error or use fallback logic
+
+                # Fan control
+                if avgTemperature > 0 and avgTemperature < 37.7  :
+                #  Turn on fan
+                    control_fan("ON")
+                else :
+                #  Turn off fan
+                    control_fan("OFF")
+                    
+                # Humidity control
+                if avgHumidity > 0 and avgHumidity < 45 : 
+                    #  Turn on humidifier
+                    control_humidifier("ON")
+                else :
+                    # Turn off humidifier
+                    control_humidifier("OFF")
+    except Exception as e:
+        print(f"Error: {e}")
+        # Handle unexpected errors
+        # Fan control
+        if avgTemperature > 0 and avgTemperature < 37.7  :
+        #  Turn on fan
+            control_fan("ON")
+        else :
+        #  Turn off fan
+            control_fan("OFF")
+            
+        # Humidity control
+        if avgHumidity > 0 and avgHumidity < 45 : 
+            #  Turn on humidifier
+            control_humidifier("ON")
+        else :
+            # Turn off humidifier
+            control_humidifier("OFF")
+
 
 # Example usage
 connect_wifi("your_ssid", "your_password")
