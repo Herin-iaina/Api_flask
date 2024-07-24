@@ -1,4 +1,5 @@
 import network
+import dht
 import ujson
 import math
 from machine import Pin, PWM
@@ -17,8 +18,6 @@ FAN_PIN = 14
 HUMIDIFIER_PIN = 15
 Pushbutton = 23
 
-# Function definitions for WiFi, JSON, stepper motor, and DHT sensor
-# Replace with equivalent MicroPython code or libraries
 
     # Initialize DHT sensors
 dht1 = dht.DHT22(Pin(DHT_1_PIN_DATA))
@@ -35,20 +34,21 @@ fan_on = False
 humidifier_pin = machine.Pin(HUMIDIFIER_PIN, machine.Pin.OUT)
 # Initial humidifier state
 humidifier_on = False
+# Définir la broche du bouton-poussoir
+endswitch = machine.Pin(Pushbutton, machine.Pin.IN, machine.Pin.PULL_UP)
 
 numFailedSensors = 0
 avgFailedSensors = 0
 avgTemperature = 0
 avgHumidity = 0 
 
-# humidity_1 = 0
-# temperature_1 = 0
-# humidity_2 = 0
-# temperature_2 = 0
-# humidity_3 = 0
-# temperature_3 = 0
-# humidity_4 = 0
-# temperature_4 = 0
+
+serverIP = " http://127.0.0.1"
+serverPort = 5005
+apiKey = "Votre_Cle_API"
+ssid = "Airbox-4D56";
+password = "1234567";
+
 
 def connect_wifi(ssid, password):
     # Replace with your WiFi connection logic
@@ -60,6 +60,7 @@ def connect_wifi(ssid, password):
     print('Connection successful')
     print(station.ifconfig())
 
+
 def read_dht_sensor(sensor):
     try:
         sensor.measure()
@@ -69,6 +70,7 @@ def read_dht_sensor(sensor):
     except OSError as e:
         print(f"DHT sensor error: {e}")
         return None, None
+    
 
 def process_sensor_data(humidity_1, temperature_1, humidity_2, temperature_2, humidity_3, temperature_3, humidity_4, temperature_4):
     numFailedSensors = 0
@@ -87,6 +89,7 @@ def process_sensor_data(humidity_1, temperature_1, humidity_2, temperature_2, hu
         numFailedSensors += 1
 
     return numFailedSensors
+
 
 def calculate_averages(numFailedSensors, temperature_1, temperature_2, temperature_3, temperature_4, humidity_1, humidity_2, humidity_3, humidity_4):
     if numFailedSensors == 0:
@@ -165,14 +168,6 @@ def send_data(serverIP, serverPort, apiKey, jsonPayload):
     # Libérer les ressources
     response.close()
 
-# # Exemple d'utilisation
-# serverIP = "192.168.1.10"
-# serverPort = 8080
-# apiKey = "ma_super_cle_api"
-# jsonPayload = {"data1": 123, "data2": "Bonjour!"}
-
-# send_data(serverIP, serverPort, apiKey, jsonPayload)
-
 
 
 def control_stepper(motor_status):
@@ -186,6 +181,13 @@ def control_stepper(motor_status):
         # Arrêter le moteur pas à pas
         s1.stop()
         s1.target(0)
+
+def read_pushbutton(pin):
+    Pushbutton_state = pin.value()
+    if Pushbutton_state :
+        control_stepper("ON")
+    else : 
+        control_stepper("OFF")
 
 def control_fan(fan_status):
     # # Assuming FAN_PIN is connected to a PWM pin
@@ -269,11 +271,14 @@ def get_data(serverIP, serverPort, apiKey):
             control_humidifier("OFF")
 
 
-# Example usage
-connect_wifi("your_ssid", "your_password")
+def check_wifi_connection():
+    if not network.WLAN(network.STA_IF).isconnected():
+        connect_wifi(ssid, password)
+
 
 while True:
     try:
+        check_wifi_connection()
         humidity_1, temperature_1 = read_dht_sensor(dht1)
         humidity_2, temperature_2 = read_dht_sensor(dht2)
         humidity_3, temperature_3 = read_dht_sensor(dht3)
@@ -283,6 +288,10 @@ while True:
         
         print(f"Number of failed sensors: {numFailedSensors}")
         avgTemperature, avgHumidity = calculate_averages(numFailedSensors, temperature_1, temperature_2, temperature_3, temperature_4, humidity_1, humidity_2, humidity_3, humidity_4)
+        jsonPayload = create_json_payload(humidity_1, temperature_1,humidity_2, temperature_2,humidity_3, temperature_3,humidity_4, temperature_4,avgTemperature, avgHumidity,fan_on,humidifier_on,numFailedSensors)
+        send_data(serverIP, serverPort, apiKey, jsonPayload)
+        get_data(serverIP, serverPort, apiKey)
+        read_pushbutton(endswitch)
         
     except Exception as e:
         print(f"Error reading DHT sensors: {e}")
