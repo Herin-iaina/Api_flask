@@ -190,9 +190,7 @@ def read_pushbutton(pin):
         control_stepper("OFF")
 
 def control_fan(fan_status):
-    # # Assuming FAN_PIN is connected to a PWM pin
-    # fan_pwm = PWM(Pin(FAN_PIN))
-    # fan_pwm.duty_u16(int(speed * 65535 / 100))
+
     global fan_on  # Access the global fan_on variable
 
     if fan_status == "ON":

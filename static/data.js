@@ -177,7 +177,7 @@ const gaugeOptions = {
 // }));
 
 let maRequete = $.ajax({
-    url: '/apps/internal_function.get_all_data',
+    url: '/alldata',
     type: 'POST'
 });
 
