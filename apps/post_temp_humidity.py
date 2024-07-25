@@ -381,3 +381,65 @@ def get_parameter() :
         print("Erreur lors de la récupération des données:", e)
 
     return result
+
+
+def get_weather_data():
+
+    
+
+    # Combine temperature and humidity queries for efficiency
+    select_latest_data = """
+    SELECT 
+        id,
+        average_temperature, 
+        average_humidity 
+    FROM data_temp 
+    ORDER BY id DESC 
+    LIMIT 1
+    """
+
+    # Combine max temperature and humidity queries for efficiency
+    select_max_values = """
+        SELECT 
+            MAX(temperature) AS max_temperature, 
+            MAX(humidity) AS max_humidity 
+        FROM data_mp
+        WHERE ddate_serveur >= %(seven_days_ago)s
+    """
+
+    today = datetime.date.today()
+    seven_days_ago = today - datetime.timedelta(days=7)
+
+    data_send = {}
+
+    try:
+        conn = get_db_connection()  # Assume get_db_connection() returns a database connection
+        cursor = conn.cursor()
+
+        # Execute the combined queries
+        cursor.execute(select_latest_data)
+        latest_data = cursor.fetchone()
+
+        cursor.execute(select_max_values, {'seven_days_ago': seven_days_ago})
+        max_values = cursor.fetchone()
+
+        if latest_data:
+            data_send = {
+                'id': latest_data[0],
+                'average_temperature': latest_data[1],
+                'average_humidity': latest_data[2]
+            }
+
+        if max_values:
+            data_send.update({
+                'max_temperature': max_values[0],
+                'max_humidity': max_values[1]
+            })
+
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+
+    return data_send
