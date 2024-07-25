@@ -144,82 +144,111 @@ const gaugeOptions = {
     }
 };  
 
+
+
 // The temperature gauge
 
-// const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
-//     yAxis: {
-//         min: 0,
-//         max: 60,
-//         title: {
-//             text: 'Average temperature'
-//         }
-//     },
-
-//     credits: {
-//         enabled: false
-//     },
-
-//     series: [{
-//         name: '°C',
-//         data: [37.5],
-//         dataLabels: {
-//             format:
-//                 '<div style="text-align:center">' +
-//                 '<span style="font-size:25px">{y}</span><br/>' +
-//                 '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-//                 '</div>'
-//         },
-//         tooltip: {
-//             valueSuffix: ' °C '
-//         }
-//     }]
-
-// }));
-
-let maRequete = $.ajax({
-    url: '/alldata',
-    type: 'POST'
-});
-
-maRequete.then(
-    function(response) { // Fonction de succès
-        console.log(response.resultat);
-        let dataValue = 37.5; // Valeur par défaut
-        if (response.resultat.data) {
-            dataValue = response.resultat.data;
+const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
+    yAxis: {
+        min: 0,
+        max: 60,
+        title: {
+            text: 'Average temperature'
         }
-
-        const chartMaxTemp = Highcharts.chart('Max-Temp', Highcharts.merge(gaugeOptions, {
-            yAxis: {
-                min: 0,
-                max: 60,
-                title: {
-                    text: 'Max Temperature'
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            series: [{
-                name: 'Max temp',
-                data: [dataValue],
-                dataLabels: {
-                    format:
-                        '<div style="text-align:center">' +
-                        '<span style="font-size:25px">{y}</span><br/>' +
-                        '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-                        '</div>'
-                },
-                tooltip: {
-                    valueSuffix: '°C'
-                }
-            }]
-        }));
     },
-    function(error) { // Fonction d'erreur
-        console.log(error);
-    }
-);
+
+    credits: {
+        enabled: false
+    },
+
+    series: [{
+        name: '°C',
+        data: [37.5],
+        dataLabels: {
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px">{y}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4"> °C </span>' +
+                '</div>'
+        },
+        tooltip: {
+            valueSuffix: ' °C '
+        }
+    }]
+
+}));
+
+
+
+// let maRequete = $.ajax({
+//     url: 'http://127.0.0.1:5005/alldataalldata',
+//     type: 'GET',
+//     headers : {
+//         "X-API-KEY": "votre_cle_api_1"
+//       },
+// });
+
+// Fonction pour faire la requête GET à l'API
+function fetchTemperature() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'http://127.0.0.1:5005/alldata', 
+            type: 'GET',
+            headers : {
+                        "X-API-KEY": "votre_cle_api_1"
+                        },
+            success: (response) => {
+                console.log(response);
+                resolve(response);
+                //resolve(response.temperature); // Suppose que la température est dans response.temperature
+            },
+            error: (error) => {
+                reject(error);
+            }
+        });
+    });
+}
+  
+  // Utilisation de la promesse pour mettre à jour le graphique
+//   fetchTemperature()
+//   console.log(fetchTemperature());
+  fetchTemperature()
+    .then(temperature => {
+      const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+          min: 0,
+          max: 60,
+          title: {
+            text: 'Average temperature'
+          }
+        },
+  
+        credits: {
+          enabled: false
+        },
+  
+        series: [{
+          name: '°C',
+          data: [temperature],
+          dataLabels: {
+            format:
+              '<div style="text-align:center">' +
+              '<span style="font-size:25px">{y}</span><br/>' +
+              '<span style="font-size:12px;opacity:0.4"> °C </span>' +
+              '</div>'
+          },
+          tooltip: {
+            valueSuffix: ' °C '
+          }
+        }]
+  
+      }));
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération de la température:', error);
+      // Gérer les erreurs, par exemple afficher un message à l'utilisateur
+    });
+  
 
 
 // ----------------
@@ -325,19 +354,3 @@ const chartMaxHumidity = Highcharts.chart('Max-Humid', Highcharts.merge(gaugeOpt
     }]
 
 }));
-
-
-// /* <script type="text/javascript"> */
-// // Data retrieved https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature
-// import Highcharts from 'highcharts';
-// import highchartsmore from 'highcharts/highcharts-more';
-// import solidgauge from 'highcharts/modules/solid-gauge';
-// import exporting from 'highcharts/modules/exporting';
-// import exportData from 'highcharts/modules/export-data';
-// import accessibility from 'highcharts/modules/accessibility';
-
-// highchartsmore(Highcharts);
-// solidgauge(Highcharts);
-// exporting(Highcharts);
-// exportData(Highcharts);
-// accessibility(Highcharts);
