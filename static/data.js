@@ -189,7 +189,7 @@ const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gauge
 // });
 
 // Fonction pour faire la requête GET à l'API
-function fetchTemperature() {
+function fetchWeatherData() {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: 'http://127.0.0.1:5005/alldata', 
@@ -209,148 +209,202 @@ function fetchTemperature() {
     });
 }
   
-  // Utilisation de la promesse pour mettre à jour le graphique
+
+// Utilisation de la promesse pour mettre à jour le graphique
 //   fetchTemperature()
 //   console.log(fetchTemperature());
-  fetchTemperature()
-    .then(temperature => {
-      const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
-        yAxis: {
-          min: 0,
-          max: 60,
-          title: {
-            text: 'Average temperature'
-          }
-        },
+fetchWeatherData()
+.then(data => {
+    // Validation des données
+    if (!isNaN(data.temperature) && !isNaN(data.humidity) &&
+        !isNaN(data.average_temperature) && !isNaN(data.average_humidity)) {
+
+        // Créer les graphiques
+        Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
+            // ... configuration du graphique pour la température moyenne
+            yAxis: {
+                min: 0,
+                max: 60,
+                title: {
+                text: 'Average temperature'
+                }
+            },
+      
+            credits: {
+              enabled: false
+            },
+            series: [{
+                name: '°C',
+                data: [data.average_temperature],
+                dataLabels: {
+                    format:
+                      '<div style="text-align:center">' +
+                      '<span style="font-size:25px">{y}</span><br/>' +
+                      '<span style="font-size:12px;opacity:0.4"> °C </span>' +
+                      '</div>'
+                  },
+                  tooltip: {
+                    valueSuffix: ' °C '
+                  }
+            }]
+        }));
+
+        Highcharts.chart('Average-Humid', Highcharts.merge(gaugeOptions, {
+            // ... configuration du graphique pour l'humidité moyenne
+            yAxis: {
+                min: 0,
+                max: 80,
+                title: {
+                    text: 'Average humidity'
+                }
+            },
+        
+            credits: {
+                enabled: false
+            },
+
+            series: [{
+                name: '%',
+                data: [data.average_humidity],
+                dataLabels: {
+                    format:
+                      '<div style="text-align:center">' +
+                      '<span style="font-size:25px">{y}</span><br/>' +
+                      '<span style="font-size:12px;opacity:0.4"> % </span>' +
+                      '</div>'
+                  },
+                  tooltip: {
+                    valueSuffix: ' % '
+                  }
+            }],
+        }));
+
+        // Mettre à jour le graphique de la température en temps réel
+        Highcharts.chart('Max-Temp',Highcharts.merge(gaugeOptions, {
+            // ... configuration du graphique pour la température max
+            yAxis: {
+                min: 0,
+                max: 60,
+                title: {
+                    text: 'Max Temperature'
+                }
+            },
+        
+            credits: {
+                enabled: false
+            },
+
+            series: [{
+                name: '°C',
+                data: [data.temperature],
+                dataLabels: {
+                    format:
+                      '<div style="text-align:center">' +
+                      '<span style="font-size:25px">{y}</span><br/>' +
+                      '<span style="font-size:12px;opacity:0.4"> °C </span>' +
+                      '</div>'
+                  },
+                  tooltip: {
+                    valueSuffix: ' °C '
+                  }
+            }]
+        }));
+
+        Highcharts.chart('Max-Humid', Highcharts.merge(gaugeOptions, {
+            // ... configuration du graphique pour l'humitidé max
+            yAxis: {
+                min: 0,
+                max: 80,
+                title: {
+                    text: 'Max humidity'
+                }
+            },
+        
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: '%',
+                data: [data.humidity],
+                dataLabels: {
+                    format:
+                      '<div style="text-align:center">' +
+                      '<span style="font-size:25px">{y}</span><br/>' +
+                      '<span style="font-size:12px;opacity:0.4"> % </span>' +
+                      '</div>'
+                  },
+                  tooltip: {
+                    valueSuffix: ' % '
+                  }
+            }]
+        }));
+
+    } else {
+        console.error('Données invalides reçues de l\'API');
+        // Afficher un message à l'utilisateur
+        alert('Une erreur s\'est produite lors du chargement des données.');
+    }
+})
+.catch(error => {
+    console.error('Erreur lors de la requête:', error);
+    // Gérer les erreurs, par exemple afficher un message à l'utilisateur
+});
+
+
+//   fetchTemperature()
+//     .then(response => {
+
+//         if (!isNaN(data.temperature) && !isNaN(data.humidity) &&
+//       !isNaN(data.average_temperature) && !isNaN(data.average_humidity)) {
+//         // Créer un tableau pour les données de la température
+//         const temperatureData = data.temperature;
+
+//         // Créer un tableau pour les données de l'humidité
+//         const humidityData = data.humidity;
+
+//         // Créer un tableau pour les données de l'average_temperature
+//         const AvgtemperatureData = data.average_temperature;
+
+//          // Créer un tableau pour les données de l'average_humidity
+//          const AvghumidityData = data.average_humidity;
+//       }
+//         // The temperature gauge
+//         const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
+//             yAxis: {
+//             min: 0,
+//             max: 60,
+//             title: {
+//             text: 'Average temperature'
+//         }
+//         },
   
-        credits: {
-          enabled: false
-        },
+//         credits: {
+//           enabled: false
+//         },
   
-        series: [{
-          name: '°C',
-          data: [temperature],
-          dataLabels: {
-            format:
-              '<div style="text-align:center">' +
-              '<span style="font-size:25px">{y}</span><br/>' +
-              '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-              '</div>'
-          },
-          tooltip: {
-            valueSuffix: ' °C '
-          }
-        }]
+//         series: [{
+//           name: '°C',
+//           data: [temperature],
+//           dataLabels: {
+//             format:
+//               '<div style="text-align:center">' +
+//               '<span style="font-size:25px">{y}</span><br/>' +
+//               '<span style="font-size:12px;opacity:0.4"> °C </span>' +
+//               '</div>'
+//           },
+//           tooltip: {
+//             valueSuffix: ' °C '
+//           }
+//         }]
   
-      }));
-    })
-    .catch(error => {
-      console.error('Erreur lors de la récupération de la température:', error);
-      // Gérer les erreurs, par exemple afficher un message à l'utilisateur
-    });
+//       }));
+
+
+//     })
+//     .catch(error => {
+//       console.error('Erreur lors de la récupération de la température:', error);
+//       // Gérer les erreurs, par exemple afficher un message à l'utilisateur
+//     });
   
 
 
-// ----------------
-
-
-
-
-//  --------- humidity ---------
-
-// The temperature gauge
-const charthumidity = Highcharts.chart('Average-Humid', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 80,
-        title: {
-            text: 'Average humidity'
-        }
-    },
-
-    credits: {
-        enabled: false
-    },
-
-    series: [{
-        name: '%',
-        data: [30],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px">{y}</span><br/>' +
-                '<span style="font-size:12px;opacity:0.4"> % </span>' +
-                '</div>'
-        },
-        tooltip: {
-            valueSuffix: '%'
-        }
-    }]
-
-}));
-// ----------------------------
-
-//  --------- Max temp ---------
-
-// The temperature gauge
-const chartMaxTemp = Highcharts.chart('Max-Temp', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 60,
-        title: {
-            text: 'Max Temperature'
-        }
-    },
-
-    credits: {
-        enabled: false
-    },
-
-    series: [{
-        name: 'Max temp',
-        data: [37.5],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px">{y}</span><br/>' +
-                '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-                '</div>'
-        },
-        tooltip: {
-            valueSuffix: '°C'
-        }
-    }]
-
-}));
-// ----------------------------
-//--------------------MAx humidity---------------
-// The temperature gauge
-const chartMaxHumidity = Highcharts.chart('Max-Humid', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 80,
-        title: {
-            text: 'Max humidity'
-        }
-    },
-
-    credits: {
-        enabled: false
-    },
-
-    series: [{
-        name: '%',
-        data: [30],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px">{y}</span><br/>' +
-                '<span style="font-size:12px;opacity:0.4"> % </span>' +
-                '</div>'
-        },
-        tooltip: {
-            valueSuffix: '%'
-        }
-    }]
-
-}));
