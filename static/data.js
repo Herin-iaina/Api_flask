@@ -68,16 +68,7 @@
         
     });
 
-//     // Fonction pour récupérer et mettre à jour les données
-// function updateDatalineLabels() {
-//     fetch('url_du_service_web')
-//         .then(response => response.json())
-//         .then(data => {
-//             // Mettez à jour les données du graphique
-//             chart.series[0].setData(data);
-//         })
-//         .catch(error => console.error('Erreur:', error));
-// }
+
 
 // --------Temp--------------
 const gaugeOptions = {
@@ -143,42 +134,6 @@ const gaugeOptions = {
         }
     }
 };  
-
-
-
-// The temperature gauge
-
-const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 60,
-        title: {
-            text: 'Average temperature'
-        }
-    },
-
-    credits: {
-        enabled: false
-    },
-
-    series: [{
-        name: '°C',
-        data: [37.5],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px">{y}</span><br/>' +
-                '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-                '</div>'
-        },
-        tooltip: {
-            valueSuffix: ' °C '
-        }
-    }]
-
-}));
-
-
 
 // let maRequete = $.ajax({
 //     url: 'http://127.0.0.1:5005/alldataalldata',
