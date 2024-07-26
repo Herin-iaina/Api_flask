@@ -158,3 +158,16 @@ print(response.text)
 #      print("rrrrrrrrrrrrr")
 
 
+Database = """CREATE TABLE data_temp (
+    id SERIAL PRIMARY KEY,
+    sensor TEXT,
+    temperature NUMERIC,
+    humidity NUMERIC,
+    date_serveur TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    average_temperature NUMERIC,
+    average_humidity NUMERIC,
+    fan_status BOOLEAN,
+    humidifier_status BOOLEAN,
+    numfailedsensors INTEGER
+);"""
+   

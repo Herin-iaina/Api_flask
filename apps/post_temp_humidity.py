@@ -257,6 +257,8 @@ def get_all_data(date_ini, date_end):
 
     except Exception as e :
         print("Erreur lors de la récupération des données:", e)
+    
+    print(resultats)
 
     return resultats
 
@@ -403,8 +405,8 @@ def get_weather_data():
         SELECT 
             MAX(temperature) AS max_temperature, 
             MAX(humidity) AS max_humidity 
-        FROM data_mp
-        WHERE ddate_serveur >= %(seven_days_ago)s
+        FROM data_temp
+        WHERE date_serveur >= %(seven_days_ago)s
     """
 
     today = datetime.date.today()
@@ -419,6 +421,8 @@ def get_weather_data():
         # Execute the combined queries
         cursor.execute(select_latest_data)
         latest_data = cursor.fetchone()
+
+        print(latest_data)
 
         cursor.execute(select_max_values, {'seven_days_ago': seven_days_ago})
         max_values = cursor.fetchone()
