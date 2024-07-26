@@ -171,3 +171,13 @@ Database = """CREATE TABLE data_temp (
     numfailedsensors INTEGER
 );"""
    
+# Contraintes: Vous pouvez ajouter des contraintes pour garantir l'intégrité des données. Par exemple, pour s'assurer que la température est positive :
+SQL = """CREATE TABLE your_table_name (
+    -- ...
+    temperature NUMERIC CHECK (temperature >= 0),
+    -- ...
+);"""
+
+# faire de nombreuses requêtes sur des colonnes spécifiques
+"""CREATE INDEX idx_date_serveur ON your_table_name (date_serveur);
+"""

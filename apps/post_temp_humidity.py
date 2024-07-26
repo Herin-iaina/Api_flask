@@ -3,6 +3,9 @@ import psycopg2
 from apps.config_database import *
 import datetime
 import threading
+import pandas as pd
+from sqlalchemy import create_engine
+
 
 
 # Obtenir la connexion à la base de données
@@ -447,3 +450,51 @@ def get_weather_data():
         print("Erreur lors de la récupération des données:", e)
 
     return data_send
+
+
+def get_data_average () :
+    # Requête SQL pour récupérer toutes les données
+    query_data = """
+    SELECT 
+        date_trunc('hour', date_serveur) as heure, 
+        AVG(temperature) as temperature_moyenne,
+        AVG(humidity) as humidite_moyenne
+    FROM 
+        data_temp
+    WHERE 
+        date_trunc('minute', date_serveur) >= %(Today)s
+    GROUP BY 
+        heure
+    ORDER BY 
+        heure;
+    """
+
+    To_day = datetime.date.today()
+    temperatureData = []
+
+    try : 
+        conn = get_db_connection()  # Assume get_db_connection() returns a database connection
+        cursor = conn.cursor()
+
+        # Execute the combined queries
+        cursor.execute(query_data, {'Today': To_day} )
+        data = cursor.fetchall()
+
+        for temperature in data :
+            hour = temperature[0] 
+            temperature_data = formatted_number = format(temperature[1], ".2f")
+            humidity_data = formatted_number = format(temperature[2], ".2f")
+            temperature_Data = {
+                'hour' : hour,
+                'temperature' : temperature_data,
+                'humidity' : humidity_data
+            }
+            temperatureData.append(temperature_Data)
+
+
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+
+    print(temperatureData)
+
+    return temperatureData
