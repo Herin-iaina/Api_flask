@@ -2,7 +2,7 @@
 
 import psycopg2
 
-HOST = "172.17.0.2"
+HOST = "127.0.0.1"
 
 USER = "ted"
 
@@ -10,10 +10,12 @@ PASSWORD = "ombre1235"
 
 DATABASE = "test"
 
+PORT = 5432
+
 # Connect to an existing database
 def get_db_connection() :
     try : 
-        conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (HOST, DATABASE, USER, PASSWORD))
+        conn = psycopg2.connect("host=%s port=%s dbname=%s user=%s password=%s" % (HOST, PORT, DATABASE, USER, PASSWORD))
         print (conn)
         print("ok")
         return conn
