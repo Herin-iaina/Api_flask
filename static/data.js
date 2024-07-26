@@ -1,15 +1,16 @@
 
 
 // let lineLabels =
- Highcharts.chart('line-labels', {
+function updateChartLineLabels(categories, temperatureData, humidityData) {
+    Highcharts.chart('line-labels', {
         chart: {
-            type: 'line',
+            type: 'spline',
             color : '#FFF',
-            backgroundColor : '#303233',
+            // backgroundColor : '#303233',
             ColorString : '#FFF'
         },
         title: {
-            text: 'Monthly Average Temperature',
+            text: 'Daily Average Temperature',
             style: {
                 color: '#FFF',
                 fontWeight: 'bold'
@@ -17,15 +18,17 @@
         },
         subtitle: {
             text: 'Source: ' +
-                '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
-                'target="_blank">Wikipedia.com</a>',
+                '<p> ESP32</p>',
                 style: {
                     color: '#FFF',
                     fontWeight: 'lighter'
                 }
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: categories,
+            accessibility: {
+                description: 'Months of the year'
+            }
         },
         yAxis: {
             title: {
@@ -34,6 +37,9 @@
                 color: '#FFF',
                 fontWeight: 'lighter',
                 }
+            },
+            labels: {
+                format: '{value}°'
             },
             gridLineColor: 'rgba(255, 255, 0, 0.08)', // Couleur des lignes de grille de l'axe Y
             lineColor: '#FF0000',     // Couleur de la ligne de l'axe Y
@@ -57,16 +63,81 @@
             }
         },
         series: [{
-            name: 'Reggane',
-            data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2,
-                22.0, 17.8]
+            name: 'Temperature',
+            data: temperatureData
         }, {
-            name: 'Tallinn',
-            data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
-                2.0, -0.9]
+            name: 'Humidité',
+            data: humidityData
         }]
         
     });
+}
+//  Highcharts.chart('line-labels', {
+//         chart: {
+//             type: 'line',
+//             color : '#FFF',
+//             backgroundColor : '#303233',
+//             ColorString : '#FFF'
+//         },
+//         title: {
+//             text: 'Monthly Average Temperature',
+//             style: {
+//                 color: '#FFF',
+//                 fontWeight: 'bold'
+//             }
+//         },
+//         subtitle: {
+//             text: 'Source: ' +
+//                 '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
+//                 'target="_blank">Wikipedia.com</a>',
+//                 style: {
+//                     color: '#FFF',
+//                     fontWeight: 'lighter'
+//                 }
+//         },
+//         xAxis: {
+//             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+//         },
+//         yAxis: {
+//             title: {
+//                 text: 'Temperature (°C)',
+//                 style: {
+//                 color: '#FFF',
+//                 fontWeight: 'lighter',
+//                 }
+//             },
+//             gridLineColor: 'rgba(255, 255, 0, 0.08)', // Couleur des lignes de grille de l'axe Y
+//             lineColor: '#FF0000',     // Couleur de la ligne de l'axe Y
+//             tickColor: '#FF0000'      // Couleur des marques de graduation de l'axe Y
+//         },
+//         legend: {
+//             itemStyle: {
+//                 color: '#FFF',    // Couleur du texte des légendes
+//             },
+//             itemHoverStyle: {
+//                 color: '#FF00FF'     // Couleur du texte des légendes au survol
+//             }
+//         },
+            
+//         plotOptions: {
+//             line: {
+//                 dataLabels: {
+//                     enabled: true
+//                 },
+//                 enableMouseTracking: false
+//             }
+//         },
+//         series: [{
+//             name: 'Reggane',
+//             data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2,
+//                 22.0, 17.8]
+//         }, {
+//             name: 'Tallinn',
+//             data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
+//                 2.0, -0.9]
+//         }]
+        
+//     });
 
 
 
@@ -306,8 +377,8 @@ function updateData() {
     });
 }
 
-updateData();
-setInterval(updateData, 2000);
+// updateData();
+// setInterval(updateData, 2000);
 
 
 //   fetchTemperature()
@@ -367,3 +438,72 @@ setInterval(updateData, 2000);
   
 
 
+// Fonction pour faire la requête GET à l'API
+function fetchWeatherData() {
+    return fetch('http://127.0.0.1:5005/WeatherDF', {
+      headers: {
+        "X-API-KEY": "votre_cle_api_1"
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur réseau : ${response.statusText}`);
+      }
+      const data = response.json();
+      console.log(data);
+      return data;
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des données:', error);
+      throw error; // Rejeter la promesse pour une gestion ultérieure
+    });
+  }
+  
+  function updateDataGraph() {
+    fetchWeatherData()
+    .then(data => {
+      // Validation des données
+      if (!Array.isArray(data)) {
+        throw new Error('Les données reçues ne sont pas un tableau.');
+      }
+  
+      const categories = data.map(item => item.hour);
+      const temperatureData = data.map(item => parseFloat(item.temperature));
+      const humidityData = data.map(item => parseFloat(item.humidity));
+  
+      // Vérification supplémentaire : s'assurer que tous les éléments sont définis
+      if (categories.some(item => !item) || temperatureData.some(item => isNaN(item)) || humidityData.some(item => isNaN(item))) {
+        throw new Error('Les données contiennent des valeurs manquantes ou invalides.');
+      }
+  
+      // Mettre à jour le graphique
+    //   updateChart(categories, temperatureData, humidityData);
+    console.log(categories);
+    console.log(temperatureData);
+    console.log(humidityData);
+    // Nouveau tableau pour stocker les heures
+    let heures = [];
+
+    // Boucle pour extraire les heures et les ajouter au nouveau tableau
+    categories.forEach(dateString => {
+    let date = new Date(dateString);
+    let heure = date.getUTCHours(); // Utilisez getHours() pour l'heure locale
+    heures.push(heure);
+    console.log(heures);
+});
+    updateChartLineLabels(heures,temperatureData,humidityData)
+
+
+    })
+    .catch(error => {
+      console.error('Erreur lors de la mise à jour du graphique:', error);
+    });
+  }
+  
+  function updateChart(categories, temperatureData, humidityData) {
+    // Code pour mettre à jour votre graphique avec les données
+    // ...
+  }
+  
+
+updateDataGraph()
