@@ -116,9 +116,42 @@ def get_data():
     }
     return jsonify(data_to_send), 202
 
+@app.route("/WeatherData", methods= ['GET'])
+def WeatherData() :
+    results = {
+    "temperature": 30.5,
+    "humidity": 60,
+    "average_temperature": 33.8,
+    "average_humidity": 67
+    }
+
+    api_key = request.headers.get('X-API-KEY')
+    if not api_key:
+        return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+    
+    
+    Weather_Data = post_temp_humidity.get_weather_data()
+    
+    if   not Weather_Data :
+        return jsonify(Weather_Data),202
+    else :
+        return jsonify(results), 202
+    
+
+@app.route("/WeatherDF", methods=['GET'])
+def get_dataWeatherDatafram() :
+    api_key = request.headers.get('X-API-KEY')
+    if not api_key:
+        return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+    
+    Weather_DF = post_temp_humidity.get_data_average()
+
+    return jsonify(Weather_DF), 202
+
 
 @app.route("/alldata", methods=['GET'])
 def get_all_data() : 
+    
 
     api_key = request.headers.get('X-API-KEY')
     if not api_key:
@@ -137,7 +170,7 @@ def get_all_data() :
             date_end = datetime.datetime.strptime(date_end, "%Y-%m-%d %H:%M")
             print(date_int,date_end)
             # return jsonify(date_end), 202
-            results = post_temp_humidity.get_all_data(date_int,date_end)
+            # results = post_temp_humidity.get_all_data(date_int,date_end)
             return jsonify(results), 202
         
         except Exception :
