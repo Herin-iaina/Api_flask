@@ -1,12 +1,10 @@
-
-
 // let lineLabels =
 function updateChartLineLabels(categories, temperatureData, humidityData) {
     Highcharts.chart('line-labels', {
         chart: {
             type: 'spline',
             color : '#FFF',
-            // backgroundColor : '#303233',
+            backgroundColor : '#303233',
             ColorString : '#FFF'
         },
         title: {
@@ -25,12 +23,15 @@ function updateChartLineLabels(categories, temperatureData, humidityData) {
                 }
         },
         xAxis: {
+            className: 'highcharts-color-1',
             categories: categories,
             accessibility: {
                 description: 'Months of the year'
-            }
+            },
         },
         yAxis: {
+            className: 'highcharts-color-0',
+
             title: {
                 text: 'Temperature (°C)',
                 style: {
@@ -51,7 +52,7 @@ function updateChartLineLabels(categories, temperatureData, humidityData) {
             },
             itemHoverStyle: {
                 color: '#FF00FF'     // Couleur du texte des légendes au survol
-            }
+            },
         },
             
         plotOptions: {
@@ -72,73 +73,6 @@ function updateChartLineLabels(categories, temperatureData, humidityData) {
         
     });
 }
-//  Highcharts.chart('line-labels', {
-//         chart: {
-//             type: 'line',
-//             color : '#FFF',
-//             backgroundColor : '#303233',
-//             ColorString : '#FFF'
-//         },
-//         title: {
-//             text: 'Monthly Average Temperature',
-//             style: {
-//                 color: '#FFF',
-//                 fontWeight: 'bold'
-//             }
-//         },
-//         subtitle: {
-//             text: 'Source: ' +
-//                 '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
-//                 'target="_blank">Wikipedia.com</a>',
-//                 style: {
-//                     color: '#FFF',
-//                     fontWeight: 'lighter'
-//                 }
-//         },
-//         xAxis: {
-//             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-//         },
-//         yAxis: {
-//             title: {
-//                 text: 'Temperature (°C)',
-//                 style: {
-//                 color: '#FFF',
-//                 fontWeight: 'lighter',
-//                 }
-//             },
-//             gridLineColor: 'rgba(255, 255, 0, 0.08)', // Couleur des lignes de grille de l'axe Y
-//             lineColor: '#FF0000',     // Couleur de la ligne de l'axe Y
-//             tickColor: '#FF0000'      // Couleur des marques de graduation de l'axe Y
-//         },
-//         legend: {
-//             itemStyle: {
-//                 color: '#FFF',    // Couleur du texte des légendes
-//             },
-//             itemHoverStyle: {
-//                 color: '#FF00FF'     // Couleur du texte des légendes au survol
-//             }
-//         },
-            
-//         plotOptions: {
-//             line: {
-//                 dataLabels: {
-//                     enabled: true
-//                 },
-//                 enableMouseTracking: false
-//             }
-//         },
-//         series: [{
-//             name: 'Reggane',
-//             data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2,
-//                 22.0, 17.8]
-//         }, {
-//             name: 'Tallinn',
-//             data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
-//                 2.0, -0.9]
-//         }]
-        
-//     });
-
 
 
 // --------Temp--------------
@@ -242,8 +176,17 @@ function updateData() {
     fetchWeatherData()
     .then(data => {
         // Validation des données
-        if (!isNaN(data.temperature) && !isNaN(data.humidity) &&
-            !isNaN(data.average_temperature) && !isNaN(data.average_humidity)) {
+        const temperature = (data.temperature)  ? parseInt(data.temperature) : 0;
+        const humidity = (data.humidity) ? parseInt(data.humidity) : 0;
+        const average_temperature = (data.average_temperature) ?  parseInt(data.average_temperature) : 0;
+        const average_humidity = (data.average_humidity) ?  parseInt(data.average_humidity) : 0;
+        // console.log(typeof temperature);
+        // console.log(typeof humidity);
+        // console.log(typeof average_temperature);
+        // console.log(typeof average_humidity);
+
+        if (!isNaN(temperature) && !isNaN(humidity) &&
+            !isNaN(average_temperature) && !isNaN(average_humidity)) {
 
             // Créer les graphiques
             Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
@@ -261,7 +204,7 @@ function updateData() {
                 },
                 series: [{
                     name: '°C',
-                    data: [data.average_temperature],
+                    data: [average_temperature],
                     dataLabels: {
                         format:
                         '<div style="text-align:center">' +
@@ -291,7 +234,7 @@ function updateData() {
 
                 series: [{
                     name: '%',
-                    data: [data.average_humidity],
+                    data: [average_humidity],
                     dataLabels: {
                         format:
                         '<div style="text-align:center">' +
@@ -322,7 +265,7 @@ function updateData() {
 
                 series: [{
                     name: '°C',
-                    data: [data.temperature],
+                    data: [temperature],
                     dataLabels: {
                         format:
                         '<div style="text-align:center">' +
@@ -351,7 +294,7 @@ function updateData() {
                 },
                 series: [{
                     name: '%',
-                    data: [data.humidity],
+                    data: [humidity],
                     dataLabels: {
                         format:
                         '<div style="text-align:center">' +
@@ -377,69 +320,13 @@ function updateData() {
     });
 }
 
-// updateData();
+updateData();
 // setInterval(updateData, 2000);
 
 
-//   fetchTemperature()
-//     .then(response => {
-
-//         if (!isNaN(data.temperature) && !isNaN(data.humidity) &&
-//       !isNaN(data.average_temperature) && !isNaN(data.average_humidity)) {
-//         // Créer un tableau pour les données de la température
-//         const temperatureData = data.temperature;
-
-//         // Créer un tableau pour les données de l'humidité
-//         const humidityData = data.humidity;
-
-//         // Créer un tableau pour les données de l'average_temperature
-//         const AvgtemperatureData = data.average_temperature;
-
-//          // Créer un tableau pour les données de l'average_humidity
-//          const AvghumidityData = data.average_humidity;
-//       }
-//         // The temperature gauge
-//         const chartTemperature = Highcharts.chart('Average-temp', Highcharts.merge(gaugeOptions, {
-//             yAxis: {
-//             min: 0,
-//             max: 60,
-//             title: {
-//             text: 'Average temperature'
-//         }
-//         },
-  
-//         credits: {
-//           enabled: false
-//         },
-  
-//         series: [{
-//           name: '°C',
-//           data: [temperature],
-//           dataLabels: {
-//             format:
-//               '<div style="text-align:center">' +
-//               '<span style="font-size:25px">{y}</span><br/>' +
-//               '<span style="font-size:12px;opacity:0.4"> °C </span>' +
-//               '</div>'
-//           },
-//           tooltip: {
-//             valueSuffix: ' °C '
-//           }
-//         }]
-  
-//       }));
-
-
-//     })
-//     .catch(error => {
-//       console.error('Erreur lors de la récupération de la température:', error);
-//       // Gérer les erreurs, par exemple afficher un message à l'utilisateur
-//     });
-  
-
 
 // Fonction pour faire la requête GET à l'API
-function fetchWeatherData() {
+function fetchWeatherDataList() {
     return fetch('http://127.0.0.1:5005/WeatherDF', {
       headers: {
         "X-API-KEY": "votre_cle_api_1"
@@ -450,7 +337,7 @@ function fetchWeatherData() {
         throw new Error(`Erreur réseau : ${response.statusText}`);
       }
       const data = response.json();
-      console.log(data);
+    //   console.log(data);
       return data;
     })
     .catch(error => {
@@ -460,7 +347,7 @@ function fetchWeatherData() {
   }
   
   function updateDataGraph() {
-    fetchWeatherData()
+    fetchWeatherDataList()
     .then(data => {
       // Validation des données
       if (!Array.isArray(data)) {
@@ -478,18 +365,21 @@ function fetchWeatherData() {
   
       // Mettre à jour le graphique
     //   updateChart(categories, temperatureData, humidityData);
-    console.log(categories);
-    console.log(temperatureData);
-    console.log(humidityData);
+    // console.log(categories);
+    // console.log(temperatureData);
+    // console.log(humidityData);
     // Nouveau tableau pour stocker les heures
     let heures = [];
 
     // Boucle pour extraire les heures et les ajouter au nouveau tableau
     categories.forEach(dateString => {
     let date = new Date(dateString);
-    let heure = date.getUTCHours(); // Utilisez getHours() pour l'heure locale
-    heures.push(heure);
-    console.log(heures);
+    // let heure = date.getUTCHours(); // Utilisez getHours() pour l'heure locale
+    // let fheure = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    let fheure = date.toISOString().substring(11, 16);
+    heures.push(fheure);
+    // console.log(heures);
+    // console.log(fheure)
 });
     updateChartLineLabels(heures,temperatureData,humidityData)
 

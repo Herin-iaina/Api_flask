@@ -439,8 +439,8 @@ def get_weather_data():
 
         if max_values:
             data_send.update({
-                'max_temperature': max_values[0],
-                'max_humidity': max_values[1]
+                'temperature': max_values[0],
+                'humidity': max_values[1]
             })
 
         cursor.close()
