@@ -1,0 +1,51 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: rgba(41,46,51,1);
+}
+
+.section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: 1px solid #ccc; */
+    /* padding: 20px; */
+    box-sizing: border-box;
+    background-color: rgba(41,46,51,1)
+}
+
+.container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+}
+
+.box {
+            flex: 1 1 50%; /* Chaque boîte prend 50% de la largeur de l'écran */
+            box-sizing: border-box;
+            /* padding: 10px; */
+            /* border: 1px solid #130909; */
+}
+
+@media (min-width: 768px) {
+        .box {
+                flex: 1 1 25%; /* Chaque boîte prend 25% de la largeur de l'écran pour les écrans plus larges */
+        }
+}
+
+.container1 .container2{
+    max-height: 100%; 
+    overflow: hidden; /* Cache le contenu qui dépasse */
+}
+
+.form-group {
+    display: flex; /* Utilise Flexbox pour l'alignement horizontal */
+    justify-content: space-between; /* Espace les éléments de manière égale */
+  }
+
+  input[type="datetime-local"] {
+    width: 200px; /* Ajuste la largeur des champs si nécessaire */
+  }

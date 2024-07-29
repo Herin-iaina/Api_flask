@@ -4,8 +4,9 @@ function updateChartLineLabels(categories, temperatureData, humidityData) {
         chart: {
             type: 'spline',
             color : '#FFF',
-            backgroundColor : '#303233',
-            ColorString : '#FFF'
+            backgroundColor : 'rgba(41,46,51,1)', // '#303233',
+            ColorString : '#FFF',
+            // height: 500
         },
         title: {
             text: 'Daily Average Temperature',
@@ -79,14 +80,15 @@ function updateChartLineLabels(categories, temperatureData, humidityData) {
 const gaugeOptions = {
     chart: {
         type: 'solidgauge',
-        backgroundColor : 'rgba(41,46,51,1)'
+        backgroundColor : 'rgba(41,46,51,1)',
+        height: 200,
     },
 
     title: null,
 
     pane: {
         center: ['50%', '85%'],
-        size: '150%',
+        size: '100%',
         startAngle: -90,
         endAngle: 90,
         background: {
@@ -97,6 +99,8 @@ const gaugeOptions = {
             shape: 'arc'
         }
     },
+
+    // setSize(100, 100, false),\
 
     exporting: {
         enabled: false
@@ -139,6 +143,8 @@ const gaugeOptions = {
         }
     }
 };  
+
+
 
 // let maRequete = $.ajax({
 //     url: 'http://127.0.0.1:5005/alldataalldata',
