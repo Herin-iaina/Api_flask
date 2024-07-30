@@ -105,3 +105,58 @@ Highcharts.chart('container', {
         }]
         
     });
+
+
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Results</title>
+</head>
+<body>
+    <div id="table-container"></div>
+
+    <script>
+        // Simulated JSON data (replace with actual API response)
+        const apiData = [
+            ["1", "Mon, 29 Jul 2024 08:48:00 GMT", "20.0000000000000000", "34.0000000000000000", "34.0000000000000000", "40.0000000000000000", "2.0000000000000000"],
+            ["1", "Mon, 29 Jul 2024 18:48:00 GMT", "40.0000000000000000", "50.0000000000000000", "35.0000000000000000", "39.0000000000000000", null]
+        ];
+
+        // Create the table
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const tbody = document.createElement("tbody");
+
+        // Create table headers
+        const headers = ["ID", "Date", "Value 1", "Value 2", "Value 3", "Value 4", "Value 5"];
+        const headerRow = document.createElement("tr");
+        headers.forEach(headerText => {
+            const th = document.createElement("th");
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Populate table rows
+        apiData.forEach(rowData => {
+            const row = document.createElement("tr");
+            rowData.forEach(cellData => {
+                const cell = document.createElement("td");
+                cell.textContent = cellData !== null ? cellData : "N/A";
+                row.appendChild(cell);
+            });
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+
+        // Append the table to the container
+        const tableContainer = document.getElementById("table-container");
+        tableContainer.appendChild(table);
+    </script>
+</body>
+</html>

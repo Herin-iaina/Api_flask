@@ -164,7 +164,7 @@ function fetchWeatherData() {
                         "X-API-KEY": "votre_cle_api_1"
                         },
             success: (response) => {
-                console.log(response);
+                // console.log(response);
                 resolve(response);
                 //resolve(response.temperature); // Suppose que la température est dans response.temperature
             },
@@ -343,7 +343,7 @@ function fetchWeatherDataList() {
         throw new Error(`Erreur réseau : ${response.statusText}`);
       }
       const data = response.json();
-    //   console.log(data);
+      console.log(data);
       return data;
     })
     .catch(error => {
@@ -396,10 +396,4 @@ function fetchWeatherDataList() {
     });
   }
   
-  function updateChart(categories, temperatureData, humidityData) {
-    // Code pour mettre à jour votre graphique avec les données
-    // ...
-  }
-  
-
 updateDataGraph()

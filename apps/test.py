@@ -181,3 +181,24 @@ SQL = """CREATE TABLE your_table_name (
 # faire de nombreuses requêtes sur des colonnes spécifiques
 """CREATE INDEX idx_date_serveur ON your_table_name (date_serveur);
 """
+
+
+sql_data_table = """
+SELECT
+    date_trunc('minute', date_serveur) as heure,
+    AVG(temperature) as temperature_moyenne,
+    AVG(humidity) as humidite_moyenne, 
+	AVG(average_temperature) as temps,
+	AVG(average_humidity) as humid,
+	AVG(numfailedsensors) as failed,
+	sensor
+FROM
+    data_temp
+WHERE
+    date_serveur >= '2024-07-28'  -- Troncature à la seconde supprimée
+GROUP BY
+    heure,
+	sensor
+ORDER BY
+    heure;
+    """

@@ -232,16 +232,38 @@ def get_all_data(date_ini, date_end):
 
     conn = get_db_connection()
     resultats = []
+    # select_all_data = """
+    # SELECT * 
+    # FROM data_temp
+    # """
+    today = datetime.date.today()
+    day_after =  today + datetime.timedelta(days=1)
+    seven_days_ago = today - datetime.timedelta(days=7)
+
     select_all_data = """
-    SELECT * 
-    FROM data_temp
+        SELECT
+            sensor,
+            date_trunc('minute', date_serveur) as heure,
+            AVG(temperature) as temperature_moyenne,
+            AVG(humidity) as humidite_moyenne, 
+            AVG(average_temperature) as temps,
+            AVG(average_humidity) as humid,
+            AVG(numfailedsensors) as failed       
+        FROM
+            data_temp
+        WHERE
+            date_serveur BETWEEN %(date_ini)s AND %(date_end)s
+        GROUP BY
+            heure,
+            sensor
+        ORDER BY
+            heure;
     """
 
-    if date_ini or date_end : 
-        select_all_data = """
-        SELECT * 
-        FROM data_mp
-        WHERE date_trunc('minute', date_serveur) BETWEEN %(date_ini)s AND %(date_end)s """   
+    if not date_ini or not date_end : 
+        date_ini = seven_days_ago
+        date_end = day_after
+
     
     try :
         conn = get_db_connection()
@@ -261,7 +283,7 @@ def get_all_data(date_ini, date_end):
     except Exception as e :
         print("Erreur lors de la récupération des données:", e)
     
-    print(resultats)
+    # print(resultats)
 
     return resultats
 
@@ -498,3 +520,25 @@ def get_data_average () :
     print(temperatureData)
 
     return temperatureData
+
+
+def data_table():
+    sql_data_table = """
+        SELECT
+            date_trunc('minute', date_serveur) as heure,
+            AVG(temperature) as temperature_moyenne,
+            AVG(humidity) as humidite_moyenne, 
+            AVG(average_temperature) as temps,
+            AVG(average_humidity) as humid,
+            AVG(numfailedsensors) as failed,
+            sensor
+        FROM
+            data_temp
+        WHERE
+            date_serveur >= '2024-07-28'  -- Troncature à la seconde supprimée
+        GROUP BY
+            heure,
+            sensor
+        ORDER BY
+            heure;
+    """

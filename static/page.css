@@ -49,3 +49,23 @@ body {
   input[type="datetime-local"] {
     width: 200px; /* Ajuste la largeur des champs si nécessaire */
   }
+
+  .section .section2 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: 1px solid #ccc; */
+    /* padding: 20px; */
+    box-sizing: border-box;
+    background-color: rgba(41,46,51,1)
+    colo
+} 
+
+.label-couleur {
+    color: #007bff;
+}
+
+.section-4 {
+    padding: 20px;
+}

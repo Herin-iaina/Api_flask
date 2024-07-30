@@ -56,24 +56,44 @@
       <!-- <div id = "Max-Humid" class="container1"> </div> -->
       <div id="line-labels" class = "container2"></div>
     </div>
-    <div class="section">Section 3
+    <div class="section">
       <!-- <button type="button" class="btn btn-primary">Primary</button> -->
-      <div class="form-group form-row align-items-center align-bottom">
-        <div class="col col-md-6 align-bottom"> 
-          <label for="datein">Date du:</label>
-          <input type="datetime-local" id="datein" class="form-control">
+      <div class="row d-flex align-items-end section2">
+        <div class="col col-md-3">
+          <label for="datein" class="text-info">Date du:</label>
+          <input type="datetime-local" id="datein" class="form-control text-muted">
         </div>
-        <div class="col col-md-6 align-bottom">
-          <label for="dateout">au:</label>
-          <input type="datetime-local" id="dateout" class="form-control">
+        <div class="col col-md-3">
+          <label for="dateout" class="text-info">au:</label>
+          <input type="datetime-local" id="dateout" class="form-control text-muted">
         </div>
-        <div class="col col-md-6 align-bottom"> 
-          <button type="button" class="btn btn-primary ">Soumettre</button>
+        <div class="col col-md-3">
+          <button type="button" class="btn btn-primary">Soumettre</button>
         </div>
       </div>
+      
+      
     </div>
-    <div class="section">Section 4</div>
+    <div class="section section-4">
+      <table class="table table-striped">
+        <thead>
+          <tr class="table-primary">
+            <th>Capteur</th>
+            <th>Date</th>
+            <th>Temperature</th>
+            <th>Humidite</th>
+            <th>Temperature moyenne</th>
+            <th>Humidite moyenne</th>
+            <th>Capteur failed</th>
+          </tr>
+        </thead>
+        <tbody id="myTable">
+          </tbody>
+      </table>
+      
+    </div>
     <script src="{{ url_for('static', filename='data.js') }}"></script>
+    <script src="{{ url_for('static', filename='table.js') }}"></script>
   </body>
 </html>
 
