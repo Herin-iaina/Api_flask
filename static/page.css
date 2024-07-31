@@ -69,3 +69,27 @@ body {
 .section-4 {
     padding: 20px;
 }
+
+.container2 {
+    flex: 1 1 100%;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav li {
+    display: inline-block;
+    margin: 0 2px;
+}
+
+nav img {
+    width: 30px; 
+    height: auto; 
+}
+
+.container0 {
+    width: 30px; 
+    height: auto; 
+}

@@ -244,10 +244,10 @@ def get_all_data(date_ini, date_end):
         SELECT
             sensor,
             date_trunc('minute', date_serveur) as heure,
-            AVG(temperature) as temperature_moyenne,
-            AVG(humidity) as humidite_moyenne, 
-            AVG(average_temperature) as temps,
-            AVG(average_humidity) as humid,
+            AVG(temperature) as temperature,
+            AVG(humidity) as humidite, 
+            AVG(average_temperature) as temperature_moyenne,
+            AVG(average_humidity) as humidite_moyenne,
             AVG(numfailedsensors) as failed       
         FROM
             data_temp
@@ -264,26 +264,37 @@ def get_all_data(date_ini, date_end):
         date_ini = seven_days_ago
         date_end = day_after
 
-    
     try :
         conn = get_db_connection()
-        cursor = conn.cursor()
-        if date_ini and date_end :
-            cursor.execute(select_all_data,{'date_ini' : date_ini ,'date_end' : date_end})
-         # Récupération des résultats 
-            resultats = cursor.fetchall()
+        cursor = conn.cursor()    
+        cursor.execute(select_all_data,{'date_ini' : date_ini ,'date_end' : date_end})
+        # Récupération des résultats 
+        data  = cursor.fetchall()
+        for element in data :
+            Sensor = element[0] 
+            dateserveur = element[1]
+            temperature  = format(element[2], ".2f")
+            humidity  = format(element[3], ".2f")
+            temperature_moyenne = format(element[4], ".2f")
+            humidite_moyenne = format(element[5], ".2f")
+            failed = format(element[6], ".0f") if element[6] else 0
+
+            Sensor_Data = {
+                'Sensor' : Sensor,
+                'date' : dateserveur,
+                'temperature' : temperature,
+                'humidity' : humidity,
+                'temperature_moyenne' : temperature_moyenne,
+                'humidite_moyenne' : humidite_moyenne,
+                'failed' : failed
+            }
+            resultats.append(Sensor_Data)
         
-        else :
-            cursor.execute(select_all_data)
-         # Récupération des résultats 
-            resultats = cursor.fetchall()
         cursor.close()
         conn.close()
 
     except Exception as e :
         print("Erreur lors de la récupération des données:", e)
-    
-    # print(resultats)
 
     return resultats
 
@@ -504,8 +515,8 @@ def get_data_average () :
 
         for temperature in data :
             hour = temperature[0] 
-            temperature_data = formatted_number = format(temperature[1], ".2f")
-            humidity_data = formatted_number = format(temperature[2], ".2f")
+            temperature_data  = format(temperature[1], ".2f")
+            humidity_data  = format(temperature[2], ".2f")
             temperature_Data = {
                 'hour' : hour,
                 'temperature' : temperature_data,
