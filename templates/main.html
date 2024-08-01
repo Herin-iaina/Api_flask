@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}">
     <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" defer=""></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" ></script>
     <script class="u-script" type="text/javascript" src= "{{ url_for('static', filename='nicepage.js') }}" defer=""></script>
-    <meta name="generator" content="Nicepage 6.0.3, nicepage.com">
     <meta name="referrer" content="origin">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     <script src="{{ url_for('static', filename='highcharts/code/highcharts.js') }}"></script>
@@ -23,13 +23,6 @@
     <script src= "{{ url_for('static', filename='highcharts/code/modules/accessibility.js') }}" ></script>
     <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
     
-    
-    <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": "",
-		"logo": "images/default-logo.png"
-}</script>
 
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="main">
@@ -40,30 +33,29 @@
       <div class="section container-fluid container0" >
         <div class="row">
           <div class="col">
-            <nav class="section navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="section navbar navbar-expand-lg navbar-dark ">
               <div class="container-fluid collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item"><a class="nav-link" aria-current="page" href="#">Accueil</a></li>
-                  <li class="nav-item"><a  class="nav-link" href="#">Conf</a></li>
+                  <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Accueil</a></li>
+                  <li class="nav-item"><a class="nav-link" aria-current="page" href="login">Configuration</a></li>
+                  <!-- <button id="loginBtn">Conf</button> -->
                 </ul>
-              </div>                
+              </div>
+              <button id="loginBtn">Conf</button> 
+
             </nav>
           </div>
         </div>
         <div class="col-7"></div>
         <div class="col"><p class="h6 text-light">ESP32 DASBORD</p></div>
       </div>
-      <!-- <nav class="section navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" aria-current="page" href="#">Accueil</a></li>
-            <li class="nav-item"><a  class="nav-link" href="#">Conf</a></li>
-        </ul>
-        </div> -->
           
       </nav>
+      
   </header> 
+  <div id="loginPopup" class="hidden">  </div>
 
+  <div id="modalContainer"></div>
     <div class="section container-fluid" >
       <div class="container">
         <div class="box">
@@ -125,6 +117,7 @@
     </div>
     <script src="{{ url_for('static', filename='data.js') }}"></script>
     <script src="{{ url_for('static', filename='table.js') }}"></script>
+    <script src="{{ url_for('static', filename='login.js') }}"></script>
   </body>
 </html>
 
