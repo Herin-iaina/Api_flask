@@ -58,7 +58,7 @@ body {
     /* border: 1px solid #ccc; */
     /* padding: 20px; */
     box-sizing: border-box;
-    background-color: rgba(41,46,51,1)
+    background-color: rgba(18, 18, 18, 0.744)
     colo
 } 
 
@@ -93,3 +93,4 @@ nav img {
     width: 30px; 
     height: auto; 
 }
+
