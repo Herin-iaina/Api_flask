@@ -1,57 +1,72 @@
-
-
-
-<form>
-  <!-- Email input -->
-  <div data-mdb-input-init class="form-outline mb-4">
-    <input type="email" id="form2Example1" class="form-control" />
-    <label class="form-label" for="form2Example1">Email address</label>
-  </div>
-
-  <!-- Password input -->
-  <div data-mdb-input-init class="form-outline mb-4">
-    <input type="password" id="form2Example2" class="form-control" />
-    <label class="form-label" for="form2Example2">Password</label>
-  </div>
-
-  <!-- 2 column grid layout for inline styling -->
-  <div class="row mb-4">
-    <div class="col d-flex justify-content-center">
-      <!-- Checkbox -->
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-        <label class="form-check-label" for="form2Example31"> Remember me </label>
-      </div>
-    </div>
-
-    <div class="col">
-      <!-- Simple link -->
-      <a href="#!">Forgot password?</a>
-    </div>
-  </div>
-
-  <!-- Submit button -->
-  <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign in</button>
-
-  <!-- Register buttons -->
-  <div class="text-center">
-    <p>Not a member? <a href="#!">Register</a></p>
-    <p>or sign up with:</p>
-    <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-facebook-f"></i>
-    </button>
-
-    <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-google"></i>
-    </button>
-
-    <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-twitter"></i>
-    </button>
-
-    <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-github"></i>
-    </button>
-  </div>
-</form>
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" ></script>
+   
+    <meta name="referrer" content="origin">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+  </head>
+  
+  <body class="u-body u-xl-mode" data-lang="fr">
+    <section class="intro">
+      <div class="bg-image h-100">
+        <div class="mask d-flex align-items-center h-100" id="login" style="background-color: rgba(41,46,51,1);">
+          <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+              <div class="col-12 col-lg-9 col-xl-8">
+                <div class="card" style="border-radius: 1rem;">
+                  <div class="row g-0">
+                    <div class="col-md-4 d-none d-md-block">
+                      <img
+                        src="../static/images/sidenav2.jpg"
+                        alt="login form"
+                        class="img-fluid" style="border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;"
+                      />
+                    </div>
+                    <div class="col-md-8 d-flex align-items-center">
+                      <div class="card-body py-5 px-4 p-md-5">
     
+                        <form action="">
+                          <h4 class="fw-bold mb-4" style="color: #92aad0;">Log in to your account</h4>
+                          <p class="mb-4" style="color: #45526e;">To log in, please fill in these text fiels with your e-mail address and password.</p>
+    
+                          <div class="form-outline mb-4">
+                            <input type="email" id="form2Example1" class="form-control" autocomplete="email" />
+                            <label class="form-label" for="form2Example1">Email address</label>
+                          </div>
+    
+                          <div class="form-outline mb-4">
+                            <input type="password" id="form2Example2" class="form-control" autocomplete="current-password webauthn" />
+                            <label class="form-label" for="form2Example2">Password</label>
+                          </div>
+    
+                          <div class="d-flex justify-content-end pt-1 mb-4">
+                            <button class="btn btn-primary btn-rounded" type="button" style="background-color: #92aad0;">Log in</button>
+                          </div>
+                          <hr>
+                          <a class="link float-end" href="#!">Forgot password? Click here.</a>
+                        </form>
+    
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- <script src="{{ url_for('static', filename='login.js') }}"></script> -->
+  </body>
+</html>

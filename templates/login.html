@@ -6,9 +6,9 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
     <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" ></script>
    
     <meta name="referrer" content="origin">
@@ -16,59 +16,40 @@
     <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
     <meta data-intl-tel-input-cdn-path="intlTelInput/">
   </head>
-  <body class="u-body u-xl-mode" data-lang="fr">
-    <section class="intro">
-      <div class="bg-image h-100">
-        <div class="mask d-flex align-items-center h-100" id="login" style="background-color: rgba(41,46,51,1);">
-          <div class="container">
-            <div class="row d-flex justify-content-center align-items-center">
-              <div class="col-12 col-lg-9 col-xl-8">
-                <div class="card" style="border-radius: 1rem;">
-                  <div class="row g-0">
-                    <div class="col-md-4 d-none d-md-block">
-                      <img
-                        src="../static/images/sidenav2.jpg"
-                        alt="login form"
-                        class="img-fluid" style="border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;"
-                      />
-                    </div>
-                    <div class="col-md-8 d-flex align-items-center">
-                      <div class="card-body py-5 px-4 p-md-5">
-    
-                        <form action="">
-                          <h4 class="fw-bold mb-4" style="color: #92aad0;">Log in to your account</h4>
-                          <p class="mb-4" style="color: #45526e;">To log in, please fill in these text fiels with your e-mail address and password.</p>
-    
-                          <div class="form-outline mb-4">
-                            <input type="email" id="form2Example1" class="form-control" autocomplete="email" />
-                            <label class="form-label" for="form2Example1">Email address</label>
-                          </div>
-    
-                          <div class="form-outline mb-4">
-                            <input type="password" id="form2Example2" class="form-control" autocomplete="current-password webauthn" />
-                            <label class="form-label" for="form2Example2">Password</label>
-                          </div>
-    
-                          <div class="d-flex justify-content-end pt-1 mb-4">
-                            <button class="btn btn-primary btn-rounded" type="button" style="background-color: #92aad0;">Log in</button>
-                          </div>
-                          <hr>
-                          <a class="link float-end" href="#!">Forgot password? Click here.</a>
-                        </form>
-    
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+  <style>
+
+</style>
+</head>
+<body class="u-body u-xl-mode " data-lang="fr">
+  <div class="login-container col-md-12 d-flex align-items-center justify-content-center">
+    <div class="login-form card-body py-5 px-4 p-md-5">
+        <form>
+            <h4 class="fw-bold mb-12" style="color: #92aad0;">Log in to your account</h4>
+            <p class="mb-4" style="color: #45526e;">To log in, please fill in these text fiels with your e-mail address and password.</p>
+
+            <div class="form-group form-outline mb-4">
+                <label class="form-label" for="userId">Identifiant :</label>
+                <input type="text" class="form-control" id="userId" placeholder="Entrez votre identifiant">
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- <script src="{{ url_for('static', filename='login.js') }}"></script> -->
-  </body>
+
+            <div class="form-group form-outline mb-4">
+                <label for="password" class="form-label">Mot de passe :</label>
+                <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" autocomplete="current-password" required>
+                <div class="form-check d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        Rester connecté
+                    </label>
+                    <a href="#"   class="create-account ms-auto link float-end">Créer un compte</a>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mb-12">
+                <button class="btn btn-primary btn-rounded" type="button" style="background-color: #92aad0;">Log in</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+</body>
 </html>
-
-
-
