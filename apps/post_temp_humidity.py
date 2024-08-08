@@ -553,3 +553,27 @@ def data_table():
         ORDER BY
             heure;
     """
+
+
+def login(user,password):
+    sql_login ="""
+       SELECT * FROM login WHERE mail_id = %(user)s
+    """
+    try : 
+        conn = get_db_connection()  # Assume get_db_connection() returns a database connection
+        cursor = conn.cursor()
+        # Execute the queries
+        cursor.execute(sql_login, {'user': user} )
+        data = cursor.fetchone()
+
+        if len(data):
+            if password == data[2] :
+                return data[0] # Retourner l'ID de l'utilisateur
+            else :
+                return False
+            return data[0]
+        else :
+            return False
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+        return False
