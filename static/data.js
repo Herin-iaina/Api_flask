@@ -158,7 +158,7 @@ const gaugeOptions = {
 function fetchWeatherData() {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: 'http://127.0.0.1:5005/WeatherData', 
+            url: '/WeatherData', 
             type: 'GET',
             headers : {
                         "X-API-KEY": "votre_cle_api_1"
@@ -333,7 +333,7 @@ updateData();
 
 // Fonction pour faire la requête GET à l'API
 function fetchWeatherDataList() {
-    return fetch('http://127.0.0.1:5005/WeatherDF', {
+    return fetch('/WeatherDF', {
       headers: {
         "X-API-KEY": "votre_cle_api_1"
       }

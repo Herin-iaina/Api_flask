@@ -1,3 +1,7 @@
+
+    <!-- <p>Bienvenue {{ current_user.id }} ! Vous êtes connecté.</p>
+    <a href="{{ url_for('logout') }}">Se déconnecter</a> -->
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="fr"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,20 +41,17 @@
               <div class="container-fluid collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Accueil</a></li>
-                  <li class="nav-item"><a class="nav-link" aria-current="page" href="login">Configuration</a></li>
-                  <!-- <button id="loginBtn">Conf</button> -->
                 </ul>
               </div>
             </nav>
           </div>
         </div>
-        <div class="col-7"></div>
-        <div class="col"><p class="h6 text-light">ESP32 DASBORD</p></div>
+        <div class="col-7"> <p>{{ current_user.id }}</p></div>
+        <div class="col"><p class="h6 text-light">Configuration</p></div>
       </div>
       
   </header> 
 
-  <div id="modalContainer"></div>
     <div class="section container-fluid" >
       <div class="container">
         <div class="box">
@@ -67,24 +68,42 @@
         </div>
     </div>
     </div>
+
     <div class="section container-fluid" >
 
       <div id="line-labels" class = "container2"></div>
     </div>
+
     <div class="section container-fluid">
-      <!-- <button type="button" class="btn btn-primary">Primary</button> -->
-      <div class="row d-flex align-items-end section2">
-        <div class="col col-md-3">
-          <label for="datein" class="text-info">Date du:</label>
-          <input type="datetime-local" id="datein" class="form-control text-muted">
+        <div class="row">
+            <div class="col col-md-12">
+                <p>Voici une comparaison des paramètres d'incubation pour les œufs de canne, poule, oie et caille, ainsi que les informations sur la tolérance aux écarts par rapport aux conditions normales :</p>
+              </div>
+        </div> 
+        
+        <div class="row">
+            <div class="col col-md-3">
+                <table class="table table-striped table-responsive table-responsive-sm">
+                    <thead>
+                      <tr class="table-primary">
+                        <th>Espèce</th>
+                        <th>Durée d'incubation (jours)</th>
+                        <th>Température normale (°C)</th>
+                        <th>Température max (°C)</th>
+                        <th>Température min (°C)</th>
+                        <th>Humidité normale (%)</th>
+                        <th>Humidité max (%)</th>
+                        <th>Humidité min (%)</th>
+                        <th>Tolérance °C %</th>
+                        <th>Tolérance (jours)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="myTable">
+                      </tbody>
+                  </table>
+              </div>
         </div>
-        <div class="col col-md-3">
-          <label for="dateout" class="text-info">au:</label>
-          <input type="datetime-local" id="dateout" class="form-control text-muted">
-        </div>
-        <div class="col col-md-3">
-          <button type="button" class="btn btn-primary" id="submitButton">Soumettre</button>
-        </div>
+        
       </div>
       
       
@@ -110,8 +129,6 @@
     <div class="section container-fluid">
       <p class="text-light">&copy;Heriniaina</p>
     </div>
-    <script src="{{ url_for('static', filename='data.js') }}"></script>
-    <script src="{{ url_for('static', filename='table.js') }}"></script>
     <!-- <script src="{{ url_for('static', filename='login.js') }}"></script> -->
   </body>
 </html>

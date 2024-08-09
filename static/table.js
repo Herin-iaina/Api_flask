@@ -87,7 +87,7 @@ function envoyerDatesAuServeur(datein, dateout) {
     // console.log('Time:', date_end);
 
     // Construction de l'URL complète avec les valeurs dynamiques
-    var url = "http://127.0.0.1:5005/alldata?date_int=" + date_int + "&date_end=" + date_end;
+    var url = "/alldata?date_int=" + date_int + "&date_end=" + date_end;
 
     var settings = {
         "url": url,

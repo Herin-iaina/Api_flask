@@ -12,7 +12,7 @@ USER = "ted"
 
 PASSWORD = "ombre1235"
 
-DATABASE = "test"
+DATABASE = "sensor"
 
 PORT = 5432
 
@@ -26,9 +26,24 @@ def get_db_connection() :
         return conn
         # Close connection
         # conn.close()
-    except (Exception, psycopg2.Error) as error :
+    except (psycopg2.OperationalError, psycopg2.Error, Exception) as error :
         print ("Erreur lors de la connextion  avec la base de donnée PostgreSQL", error)
-        return None
+        # Si une erreur est levée (base de données inexistante), la créer
+        if hasattr(error, 'pgcode') and error.pgcode == '3D000' or 'does not exist' in str(error):  # Code d'erreur spécifique pour une base de données inexistante
+            # Connexion à la base de données par défaut (postgres) pour créer la nouvelle base
+            conn = psycopg2.connect(host=HOST, port=PORT, dbname='postgres', user=USER, password=PASSWORD)
+            conn.autocommit = True  # Activer l'autocommit pour créer la base de données
+            with conn.cursor() as cur:
+                create_database(cur)
+            # Reconnexion à la base nouvellement créée
+            conn = psycopg2.connect("host=%s port=%s dbname=%s user=%s password=%s" % (HOST, PORT, DATABASE, USER, PASSWORD))
+            creationTablepsycopg2(conn)
+            return conn
+            
+        else:
+            raise  # Relancer l'exception si ce n'est pas une erreur de base inexistante
+            return None
+            
     
 # Close existing connexion database   
 # Validation des modifications et fermeture de la connexion
@@ -37,6 +52,9 @@ def close_db_connection():
     conn.close()
 
 
+def create_database(cursor):
+    """Crée la base de données si elle n'existe pas."""
+    cursor.execute("CREATE DATABASE %s" % DATABASE)
 
 def creationTable(username,password,host,port,database_name):
     
@@ -52,6 +70,7 @@ def creationTable(username,password,host,port,database_name):
         __tablename__ = 'login'
         id = Column(Integer, primary_key=True)
         mail_id = Column(String)
+        user_name = Column(String)
         password = Column(String)
         status = Column(Boolean)
 
@@ -91,7 +110,7 @@ def creationTable(username,password,host,port,database_name):
 def creationTablepsycopg2(conn):
     # Création d'un curseur
     cur = conn.cursor()
-    
+
     # Vérification de l'existence de la table "login"
     cur.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'login')")
     login_table_exists = cur.fetchone()[0]
@@ -102,10 +121,12 @@ def creationTablepsycopg2(conn):
             CREATE TABLE login (
                 id SERIAL PRIMARY KEY,
                 mail_id TEXT,
+                user_name TEXT,
                 password TEXT,
-                status TEXT
+                status BOOLEAN
             )
         """)
+        cur.execute("INSERT INTO login (mail_id, user_name, password, status) VALUES ('admin', 'admin', 'admin', True) ")
         print("Table 'login' créée avec succès.")
 
     # Vérification de l'existence de la table "stepper"
@@ -118,7 +139,7 @@ def creationTablepsycopg2(conn):
             CREATE TABLE stepper (
                 id SERIAL PRIMARY KEY,
                 start_date DATE,
-                status TEXT
+                status BOOLEAN
             )
         """)
         print("Table 'stepper' créée avec succès.")
@@ -140,12 +161,11 @@ def creationTablepsycopg2(conn):
         """)
         print("Table 'parameter_data' créée avec succès.")
 
-        # Vérification de l'existence de la table "data_temp"
+    # Vérification de l'existence de la table 'data_temp' et la crée si nécessaire.
     cur.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'data_temp')")
-    data_temp_table_exists = cur.fetchone()[0]
+    table_exists = cur.fetchone()[0]
 
-    if not data_temp_table_exists:
-        # Création de la table "data_temp"
+    if not table_exists:
         cur.execute("""
             CREATE TABLE data_temp (
                 id SERIAL PRIMARY KEY,
@@ -158,7 +178,11 @@ def creationTablepsycopg2(conn):
                 fan_status BOOLEAN,
                 humidifier_status BOOLEAN,
                 numfailedsensors INTEGER
+            )
         """)
-        print("Table 'TABLE data_temp' créée avec succès.")
+        print("Table 'data_temp' créée avec succès.")
+    
+    conn.commit()
 
 
+# get_db_connection() 

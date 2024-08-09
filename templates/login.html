@@ -14,29 +14,49 @@
     <meta name="referrer" content="origin">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
-    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+    <!-- <meta data-intl-tel-input-cdn-path="intlTelInput/"> -->
   </head>
   <style>
 
 </style>
 </head>
 <body class="u-body u-xl-mode " data-lang="fr">
+    <header>
+        <div class="section container-fluid container0" >
+          <div class="row">
+            <div class="col">
+              <nav class="section navbar navbar-expand-lg navbar-dark ">
+                <div class="container-fluid collapse navbar-collapse">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Accueil</a></li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+          </div>
+          <div class="col-7"></div>
+          <div class="col"></div>
+        </div>  
+    </header> 
+
   <div class="login-container col-md-12 d-flex align-items-center justify-content-center">
     <div class="login-form card-body py-5 px-4 p-md-5">
-        <form>
+        <form id="loginForm">
             <h4 class="fw-bold mb-12" style="color: #92aad0;">Log in to your account</h4>
             <p class="mb-4" style="color: #45526e;">To log in, please fill in these text fiels with your e-mail address and password.</p>
 
-            <div class="form-group form-outline mb-4">
-                <label class="form-label" for="userId">Identifiant :</label>
-                <input type="text" class="form-control" id="userId" placeholder="Entrez votre identifiant">
-            </div>
+            <div id="errorMessage" style="color: red;"></div>
 
             <div class="form-group form-outline mb-4">
+                <label class="form-label" for="userId">Identifiant :</label>
+                <input type="text" class="form-control" id="username" placeholder="Entrez votre identifiant" style="color: rgb(1, 1, 1)!Important;">
+            </div>
+
+            <div class="form-group form-outline mb-4" >
                 <label for="password" class="form-label">Mot de passe :</label>
                 <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" autocomplete="current-password" required>
                 <div class="form-check d-flex align-items-center">
-                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                    <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="remember_me">
                     <label class="form-check-label" for="rememberMe">
                         Rester connecté
                     </label>
@@ -45,11 +65,12 @@
             </div>
 
             <div class="d-flex justify-content-end mb-12">
-                <button class="btn btn-primary btn-rounded" type="button" style="background-color: #92aad0;">Log in</button>
+                <button class="btn btn-primary btn-rounded"  id="login-btn" type="submit" style="background-color: #92aad0;">Log in</button>
             </div>
 
         </form>
     </div>
 </div>
+<script src="{{ url_for('static', filename='login.js') }}"></script>
 </body>
 </html>

@@ -565,8 +565,9 @@ def login(user,password):
         # Execute the queries
         cursor.execute(sql_login, {'user': user} )
         data = cursor.fetchone()
+        print(data)
 
-        if len(data):
+        if data:
             if password == data[2] :
                 return data[0] # Retourner l'ID de l'utilisateur
             else :
