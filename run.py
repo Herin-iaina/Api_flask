@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory, url_for, redirect
 import json
 from apps import post_temp_humidity
 import datetime 
 from apps import config_database
-
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+import os
+from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -118,12 +120,12 @@ def get_data():
 
 @app.route("/WeatherData", methods= ['GET'])
 def WeatherData() :
-    results = {
-    "temperature": 30.5,
-    "humidity": 60,
-    "average_temperature": 33.8,
-    "average_humidity": 67
-    }
+    # results = {
+    # "temperature": 30.5,
+    # "humidity": 60,
+    # "average_temperature": 33.8,
+    # "average_humidity": 67
+    # }
 
     api_key = request.headers.get('X-API-KEY')
     if not api_key:
@@ -132,10 +134,7 @@ def WeatherData() :
     
     Weather_Data = post_temp_humidity.get_weather_data()
     
-    if   not Weather_Data :
-        return jsonify(Weather_Data),202
-    else :
-        return jsonify(results), 202
+    return jsonify(Weather_Data),202
     
 
 @app.route("/WeatherDF", methods=['GET'])
@@ -149,6 +148,7 @@ def get_dataWeatherDatafram() :
     return jsonify(Weather_DF), 202
 
 
+
 @app.route("/alldata", methods=['GET'])
 def get_all_data() : 
     
@@ -156,25 +156,63 @@ def get_all_data() :
     api_key = request.headers.get('X-API-KEY')
     if not api_key:
         return jsonify({'message': 'API key missing'}), 401  # Unauthorized
+    
+    # print(request.url)
+    
+    def formater_date(date_str):
+        try:
+            # Convertir la chaîne en objet datetime
+            datetime_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+            # Formater l'objet datetime dans le format souhaité
+            return datetime_obj.strftime("%Y-%m-%d %H:%M")
+        except ValueError:
+            # Si le format ne correspond pas, essayer sans les secondes
+            try:
+                datetime_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M")
+                return datetime_obj.strftime("%Y-%m-%d %H:%M")
+            except ValueError:
+                try:
+                    datetime_obj = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M")
+                    return datetime_obj.strftime("%Y-%m-%d %H:%M")
+                except ValueError:
+                    try:
+                        datetime_obj = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+                        return datetime_obj.strftime("%Y-%m-%d %H:%M")
+                    except ValueError:
+                        return "Format de date invalide"
+            
 
     if 'date_int' not in request.args or 'date_end' not in request.args:
         # return jsonify({'message': 'Missing parameters'}), 400  # Bad Request
         results = post_temp_humidity.get_all_data(False,False)
         return jsonify(results), 202
+    
     else:  
         date_int = request.args['date_int']
         date_end = request.args['date_end']
-        
+
+        # print(date_int,date_end)
+
+        time_delta = datetime.timedelta(hours=0)
+
+        if ':' not in date_int:  # Vérifie si l'heure est spécifiée
+            date_int = date_int + " 00:00"
+            # print(date_int)
+
+        if ':' not in date_end:  # Vérifie si l'heure est spécifiée
+            date_end = date_end + " 00:00"
+
         try : 
-            date_int = datetime.datetime.strptime(date_int, "%Y-%m-%d %H:%M")
-            date_end = datetime.datetime.strptime(date_end, "%Y-%m-%d %H:%M")
+            date_int = formater_date(date_int)
+            date_end = formater_date(date_end)
             print(date_int,date_end)
-            # return jsonify(date_end), 202
-            # results = post_temp_humidity.get_all_data(date_int,date_end)
+            # # return jsonify(date_end), 202
+            results = post_temp_humidity.get_all_data(date_int,date_end)
             return jsonify(results), 202
         
         except Exception :
             return jsonify("Internal serveur error"), 500
+        
 
 @app.route("/parameter", methods=['GET','POST'])
 def create_parameter() : 
@@ -226,8 +264,93 @@ def create_parameter() :
     else:
         result = post_temp_humidity.get_parameter()
         return jsonify(result), 202 # Succès
-        
+    
+@app.route('/templates/<path:filename>')
+def serve_templates(filename):
+    return send_from_directory('templates', filename)
 
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+
+
+app.secret_key = os.urandom(24)  # Génère une clé secrète aléatoire
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'  # Spécifie la vue de connexion
+# Durée de session par défaut (2 jours)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
+
+# # Dummy user for demonstration purposes
+# Gestion des utilisateurs avec Flask-Login
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
+@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login.<extension>', methods=['GET', 'POST'])
+def login(extension=None):
+    if request.method == 'POST':
+        # print(request.url)
+        # Traitez les données du formulaire ici
+        # Vérifier si les données sont envoyées en JSON
+        if request.is_json:
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+            rememberMe = data.get('rememberMe')
+            # print(data,username,password,rememberMe)
+        else:
+            # Sinon, traiter comme des données de formulaire
+            username = request.form.get('username')
+            password = request.form.get('password')
+            rememberMe = request.form.get('rememberMe')
+
+        if not username or not password :
+            return jsonify({'message': 'Username and password required'}), 400
+        
+        if rememberMe : 
+            # Mettre à jour la durée de session ( 1 semaine)
+            app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+        
+        user_id = post_temp_humidity.login(username,password)
+        if user_id :
+            user = User(id=user_id)
+            login_user(user)
+            print("ok")
+            return jsonify({'success': True}), 200
+            
+        else : 
+            # error = 'Nom d\'utilisateur ou mot de passe incorrect'
+            return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
+    
+    return render_template('login.html')
+
+
+@app.route('/parametre')
+@login_required
+def parametre():
+    return render_template('parametre.html')
+    # return f"Welcome {current_user.id}! You are logged in."
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+    
+  
+
+
+app.static_folder = 'static'
 
 if __name__ == "__main__":
     app.run("0.0.0.0",debug=True, port= 5005)
