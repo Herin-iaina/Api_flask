@@ -238,137 +238,79 @@ const dataGoogle = [
     }
   }]
 
-// Google 
-  
-  // Fonction pour créer une ligne de tableau à partir d'un objet de données
-  function createTableRow(data) {
-    const row = document.createElement('tr');
-    
-    // Créer les cellules de la ligne
-    for (const key in data) {
+// Fonction pour créer une ligne de tableau à partir d'un objet de données
+function createTableRow(data) {
+  const row = document.createElement('tr');
+  for (const key in data) {
       const cell = document.createElement('td');
-      cell.textContent = data[key];
+      cell.textContent = typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key];
       row.appendChild(cell);
-    }
-    
-    return row;
   }
-  
-  // Fonction pour créer le tableau HTML
-  function createTable() {
-    const table = document.createElement('table');
-    const tableBody = document.createElement('tbody');
-  
-    // Créer l'en-tête du tableau
-    const headerRow = document.createElement('tr');
-    for (const key in data[0]) {
+  return row;
+}
+
+// Fonction pour créer le tableau HTML
+function createTable(data) {
+  const table = document.createElement('table');
+  const tableBody = document.createElement('tbody');
+
+  // Créer l'en-tête du tableau
+  const headerRow = document.createElement('tr');
+  const headers = getHeaders(data);
+  headers.forEach(header => {
       const th = document.createElement('th');
-      th.textContent = key;
+      th.textContent = header;
       headerRow.appendChild(th);
-    }
-    tableBody.appendChild(headerRow);
-  
-    // Créer les lignes de données
-    dataGoogle.forEach(item => {
+  });
+  tableBody.appendChild(headerRow);
+
+  // Créer les lignes de données
+  const rows = getRows(data);
+  rows.forEach(item => {
       const row = createTableRow(item);
       tableBody.appendChild(row);
-    });
-  
-    table.appendChild(tableBody);
-    return table;
+  });
+
+  table.appendChild(tableBody);
+  return table;
+}
+
+// Fonction pour obtenir les en-têtes du tableau
+function getHeaders(data) {
+  if (Array.isArray(data)) {
+      return Object.keys(data[0]);
+  } else if (typeof data[0] === 'object') {
+      return Object.keys(data[0]);
+  } else {
+      return Object.keys(data);
   }
-  
-  // Obtenir l'élément HTML où tu veux insérer le tableau
-  const container = document.getElementById('table-container'); // Remplace par l'ID de ton conteneur
-  
-  // Créer le tableau et l'ajouter au conteneur
-  const table = createTable();
-  container.appendChild(table);
-  
-// Claude
-// Supposons que les données JSON sont stockées dans une variable appelée 'dataClaude'
-
-function createTable() {
-    // Créer la structure de base du tableau
-    let table = '<table border="1"><tr><th>Espèce</th><th>Jours d\'incubation</th><th>Température (°C)</th><th>Humidité (%)</th><th>Tolérance</th></tr>';
-
-    // Parcourir les espèces
-    data.especes.forEach(espece => {
-        table += '<tr>';
-        table += `<td>${espece.nom}</td>`;
-        table += `<td>${espece.incubation.jours}</td>`;
-        
-        // Température
-        table += '<td>';
-        table += `Normale: ${espece.incubation.temperature.normale}<br>`;
-        table += `Max: ${espece.incubation.temperature.max}<br>`;
-        table += `Min: ${espece.incubation.temperature.min}`;
-        table += '</td>';
-        
-        // Humidité
-        table += '<td>';
-        table += `Normale: ${espece.incubation.humidite.normale.standard}<br>`;
-        table += `Derniers jours: ${espece.incubation.humidite.normale.derniers_jours}<br>`;
-        table += `Max: ${espece.incubation.humidite.max}<br>`;
-        table += `Min: ${espece.incubation.humidite.min}`;
-        table += '</td>';
-        
-        // Tolérance
-        table += '<td>';
-        table += `Jours: ±${espece.incubation.tolerance.jours}<br>`;
-        table += `Température: ±${espece.incubation.tolerance.temperature}°C<br>`;
-        table += `Humidité: ±${espece.incubation.tolerance.humidite}%`;
-        table += '</td>';
-        
-        table += '</tr>';
-    });
-
-    table += '</table>';
-
-    // Ajouter la tolérance générale
-    table += '<h3>Tolérance Générale :</h3>';
-    table += `<p><strong>Température :</strong> ${data.tolerance_generale.temperature}</p>`;
-    table += `<p><strong>Humidité :</strong> ${data.tolerance_generale.humidite}</p>`;
-
-    // Insérer le tableau dans le document HTML
-    document.getElementById('incubation-table').innerHTML = table;
 }
 
-// Appeler la fonction pour créer le tableau
-createTable();
-
-// Gpt
-function afficherTableauIncubation(data) {
-    const tbody = document.getElementById('incubation-table');
-
-    for (const animal in data) {
-        const item = data[animal];
-
-        const row = `<tr>
-            <td>${animal.charAt(0).toUpperCase() + animal.slice(1)}</td>
-            <td>${item.duree_incubation}</td>
-            <td>
-                Normale: ${item.temperature.normale}°C<br>
-                Maximale: ${item.temperature.maximale}°C<br>
-                Minimale: ${item.temperature.minimale}°C
-            </td>
-            <td>
-                Normale (Première Période): ${item.humidite.normale.premiere_periode}<br>
-                Normale (Dernière Période): ${item.humidite.normale.derniere_periode}<br>
-                Maximale: ${item.humidite.maximale}<br>
-                Minimale: ${item.humidite.minimale}
-            </td>
-            <td>
-                Température: ${item.tolerance_ecarts.temperature}<br>
-                Humidité: ${item.tolerance_ecarts.humidite}
-            </td>
-        </tr>`;
-
-        tbody.innerHTML += row;
-    }
+// Fonction pour obtenir les lignes de données
+function getRows(data) {
+  if (Array.isArray(data)) {
+      return data;
+  } else if (typeof data[0] === 'object') {
+      return Object.values(data[0]);
+  } else {
+      return [data];
+  }
 }
 
-// Appeler la fonction pour afficher le tableau après que la page soit chargée
-window.onload = function() {
-    afficherTableauIncubation(incubationData);
-};
+// Obtenir l'élément HTML où tu veux insérer le tableau
+const container = document.getElementById('table-container'); 
+
+let dataitem;
+const test = 0; // Définir la variable test pour sélectionner les données
+
+if (test == 1) {
+  dataitem = data1;
+} else if (Test == 2) {
+  dataitem = data2;
+} else {
+  
+  dataitem = data3
+}
+// Créer le tableau et l'ajouter au conteneur
+const table = createTable(dataitem);
+container.appendChild(table);
