@@ -213,6 +213,45 @@ def get_all_data() :
         except Exception :
             return jsonify("Internal serveur error"), 500
         
+@app.route("/isruning", methods=['GET','POST'])
+def getinitialdate() :
+    if request.method == 'POST':
+        # Vérifier si les données sont envoyées en JSON
+        if request.is_json:
+            data = request.get_json()
+            dateinit = data.get('date')
+            # print(data,username,password,rememberMe)
+        else:
+            # Sinon, traiter comme des données de formulaire
+            dateinit = request.form.get('date')
+        
+        if dateinit :
+            dateformated = 0
+            try:
+            # Convertir la chaîne en objet datetime
+                datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M:%S")
+                # Formater l'objet datetime dans le format souhaité
+                dateformated = datetime_obj.strftime("%Y-%m-%d %H:%M")
+            except ValueError:
+            # Si le format ne correspond pas, essayer sans les secondes
+                try:
+                    datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M")
+                    dateformated = datetime_obj.strftime("%Y-%m-%d %H:%M")
+                except ValueError:
+                    try:
+                        datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M")
+                        dateformated = datetime_obj.strftime("%Y-%m-%d %H:%M")
+                    except ValueError:
+                        try:
+                            datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M:%S.%fZ")
+                            dateformated = datetime_obj.strftime("%Y-%m-%d %H:%M")
+                        except ValueError:
+                            return jsonify(True), 202
+            is_ok = post_temp_humidity.getdateinit(dateformated)
+            return jsonify(is_ok), 202
+        else : 
+            return jsonify("Veillez renseigner la date"), 202
+        
 
 @app.route("/parameter", methods=['GET','POST'])
 def create_parameter() : 
@@ -332,6 +371,14 @@ def login(extension=None):
             return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
     
     return render_template('login.html')
+
+@app.route('/check_session', methods=['GET'])
+def check_session():
+    if current_user.is_authenticated:
+        return jsonify({'is_authenticated': True})
+    else:
+        return jsonify({'is_authenticated': False})
+
 
 
 @app.route('/parametre')

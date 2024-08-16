@@ -578,3 +578,41 @@ def login(user,password):
     except Exception as e:
         print("Erreur lors de la récupération des données:", e)
         return False
+    
+def getdateinit(date) :
+    sqldateinit = """
+        SELECT start_date, espece, timetoclose FORM parameter_data
+    """
+    try : 
+        conn = get_db_connection()  # Assume get_db_connection() returns a database connection
+        cursor = conn.cursor()
+        # Execute the queries
+        cursor.execute(sqldateinit )
+        data = cursor.fetchone()
+        # print(data)
+
+        if data:
+            date_remain = data[0] - date
+            days = 28 #PouleCanneOieCailleAutre
+            if data[0] == "poule" :
+                days = 21
+            elif data[0] == "canne" :
+                days = 28
+            elif data[0] == "oie" :
+                days = 30
+            elif data[0] == "caille" :
+                days = 18
+            else :
+                days = data[2]
+
+            remain_time = datetime.timedelta(days=days)
+            if date_remain > remain_time :
+                return True # Retourner vrais si on peut lancer un nouveau processus
+            else :
+                return False
+            
+        else :
+            return True
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+        return False

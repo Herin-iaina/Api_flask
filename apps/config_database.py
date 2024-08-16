@@ -88,6 +88,8 @@ def creationTable(username,password,host,port,database_name):
         start_date = Column(DateTime)
         stat_stepper = Column(Boolean)
         number_stepper = Column(Integer)
+        espece = Column(String)
+        timetoclose = Column(Integer)
 
     # Vérification de l'existence des tables et création si nécessaire
     if not engine.dialect.has_table(engine, 'login'):
@@ -156,7 +158,9 @@ def creationTablepsycopg2(conn):
                 humidity FLOAT,
                 start_date DATE,
                 stat_stepper BOOLEAN,
-                number_stepper INTEGER
+                number_stepper INTEGER,
+                espece TEXT,
+                timetoclose INTEGER
             )
         """)
         print("Table 'parameter_data' créée avec succès.")

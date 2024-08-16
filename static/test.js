@@ -835,81 +835,622 @@
 
 
 
-  // Fonction pour créer une ligne de tableau à partir d'un objet de données
-function createTableRow(data) {
-    const row = document.createElement('tr');
-    for (const key in data) {
-        const cell = document.createElement('td');
-        cell.textContent = typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key];
-        row.appendChild(cell);
-    }
-    return row;
-}
+//   // Fonction pour créer une ligne de tableau à partir d'un objet de données
+// function createTableRow(data) {
+//     const row = document.createElement('tr');
+//     for (const key in data) {
+//         const cell = document.createElement('td');
+//         cell.textContent = typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key];
+//         row.appendChild(cell);
+//     }
+//     return row;
+// }
+
+// // Fonction pour créer le tableau HTML
+// function createTable(data) {
+//     const table = document.createElement('table');
+//     const tableBody = document.createElement('tbody');
+
+//     // Créer l'en-tête du tableau
+//     const headerRow = document.createElement('tr');
+//     const headers = getHeaders(data);
+//     headers.forEach(header => {
+//         const th = document.createElement('th');
+//         th.textContent = header;
+//         headerRow.appendChild(th);
+//     });
+//     tableBody.appendChild(headerRow);
+
+//     // Créer les lignes de données
+//     const rows = getRows(data);
+//     rows.forEach(item => {
+//         const row = createTableRow(item);
+//         tableBody.appendChild(row);
+//     });
+
+//     table.appendChild(tableBody);
+//     return table;
+// }
+
+// // Fonction pour obtenir les en-têtes du tableau
+// function getHeaders(data) {
+//     if (Array.isArray(data)) {
+//         return Object.keys(data[0]);
+//     } else if (typeof data[0] === 'object') {
+//         return Object.keys(data[0]);
+//     } else {
+//         return Object.keys(data);
+//     }
+// }
+
+// // Fonction pour obtenir les lignes de données
+// function getRows(data) {
+//     if (Array.isArray(data)) {
+//         return data;
+//     } else if (typeof data[0] === 'object') {
+//         return Object.values(data[0]);
+//     } else {
+//         return [data];
+//     }
+// }
+
+// // Obtenir l'élément HTML où tu veux insérer le tableau
+// const container = document.getElementById('table-container'); // Remplace par l'ID de ton conteneur
+
+// // Définir la variable test pour sélectionner les données
+// const test = 3; // Changer cette valeur pour tester différents jeux de données
+
+// let dataitem;
+// if (test === 1) {
+//     dataitem = data1;
+// } else if (test === 2) {
+//     dataitem = data2;
+// } else {
+//     dataitem = data3;
+// }
+
+// // Créer le tableau et l'ajouter au conteneur
+// container.innerHTML = '';
+// const table = createTable(dataitem);
+// container.appendChild(table);
+
+// // Fonction pour créer une ligne de tableau à partir d'un objet de données
+// function createTableRow(data) {
+//     const row = document.createElement('tr');
+//     for (const key in data) {
+//         const cell = document.createElement('td');
+//         cell.textContent = typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key];
+//         row.appendChild(cell);
+//     }
+//     return row;
+//   }
+  
+//   // Fonction pour créer le tableau HTML
+//   function createTable(data) {
+//     const table = document.createElement('table');
+//     table.classList.add('table table-bordered table-responsive-stack');
+//     const tableBody = document.createElement('tbody');
+    
+  
+//     // Créer l'en-tête du tableau
+//     const headerRow = document.createElement('tr');
+//     const headers = getHeaders(data);
+//     headers.forEach(header => {
+//         const th = document.createElement('th');
+//         th.textContent = header;
+//         headerRow.appendChild(th);
+//     });
+//     tableBody.appendChild(headerRow);
+  
+//     // Créer les lignes de données
+//     const rows = getRows(data);
+//     rows.forEach(item => {
+//         const row = createTableRow(item);
+//         tableBody.appendChild(row);
+//     });
+  
+//     table.appendChild(tableBody);
+//     return table;
+//   }
+  
+//   // Fonction pour obtenir les en-têtes du tableau
+//   function getHeaders(data) {
+//     if (Array.isArray(data)) {
+//         return Object.keys(data[0]);
+//     } else if (typeof data[0] === 'object') {
+//         return Object.keys(data[0]);
+//     } else {
+//         return Object.keys(data);
+//     }
+//   }
+  
+//   // Fonction pour obtenir les lignes de données
+//   function getRows(data) {
+//     if (Array.isArray(data)) {
+//         return data;
+//     } else if (typeof data[0] === 'object') {
+//         return Object.values(data[0]);
+//     } else {
+//         return [data];
+//     }
+//   }
+  
+//   // Obtenir l'élément HTML où tu veux insérer le tableau
+//   const container = document.getElementById('table-container'); 
+  
+//   // Créer le tableau et l'ajouter au conteneur
+  
+//   if (container) { // Vérifier si le conteneur existe
+//     let dataitem;
+//     const test = 1; // Définir la variable test pour sélectionner les données
+  
+//     if (test === 1) {
+//       dataitem = data1;
+//     } else if (test === 2) {
+//       dataitem = data2;
+//     } else {
+//       dataitem = data3;
+//     }
+  
+//     // Créer le tableau et l'ajouter au conteneur
+//     const table = createTable(dataitem);
+//     container.appendChild(table);
+//   } else {
+//     console.error('Le conteneur "table-container" n\'existe pas.');
+//   }
+
+
+// function createTable(data) {
+//     const table = document.createElement('table');
+//     const thead = table.createTHead();
+//     const tbody = table.createTBody();
+  
+//     // Récupérer les clés du premier objet pour les en-têtes
+//     const headers = Object.keys(data[0]);
+  
+//     // Créer la ligne d'en-tête
+//     const headerRow = thead.insertRow();
+//     headers.forEach(header => {
+//       const th = document.createElement('th');
+//       th.textContent = header;
+//       headerRow.appendChild(th);
+//     });
+  
+//     // Créer les lignes de données
+//     data.forEach(item => {
+//       const row = tbody.insertRow();
+//       headers.forEach(header => {
+//         const cell = row.insertCell();
+//         // Accéder à la valeur en utilisant la notation pointée ou bracket
+//         cell.textContent = item[header];
+//       });
+//     });
+  
+//     return table;
+//   }
+  
+
+// function createTable(data) {
+//     function getHeaders(data) {
+//       if (!Array.isArray(data) || data.length === 0) {
+//         console.error('Les données ne sont pas un tableau ou sont vides');
+//         return [];
+//       }
+  
+//       const firstItem = data[0];
+      
+//       if (firstItem.hasOwnProperty('espèces')) {
+//         console.log("C'est dataClaude");
+//         return Claudedata(data);
+//       } else if (firstItem.hasOwnProperty('espèce')) {
+//         console.log("C'est dataGoogle");
+//         return googledata(data);
+//       } else if (firstItem.hasOwnProperty('canne')) {
+//         console.log("C'est dataGPT");
+//         return gtpdata(data);
+//       } else {
+//         console.error("Structure de données inconnue");
+//         return [];
+//       }
+//     }   
+  
+//     function gtpdata(dataGPT) {
+//       const result = [];
+//       for (const [espece, details] of Object.entries(dataGPT[0])) {
+//         result.push({
+//           espece,
+//           duree_incubation: details.duree_incubation,
+//           temperature_normale: details.temperature.normale,
+//           temperature_max: details.temperature.maximale,
+//           temperature_min: details.temperature.minimale,
+//           humidite_normale: `${details.humidite.normale.premiere_periode}, ${details.humidite.normale.derniere_periode}`,
+//           humidite_max: details.humidite.maximale,
+//           humidite_min: details.humidite.minimale,
+//           tolerance_temperature: details.tolerance_ecarts.temperature,
+//           tolerance_humidite: details.tolerance_ecarts.humidite
+//         });
+//       }
+//       return result;
+//     }
+  
+//     function googledata(dataGoogle) {
+//       return dataGoogle;
+//     }
+  
+//     function Claudedata(dataClaude) {
+//       return dataClaude[0].especes.map(espece => ({
+//         espèce: espece.nom,
+//         durée_incubation: espece.incubation.jours,
+//         température_normale: espece.incubation.temperature.normale,
+//         température_max: espece.incubation.temperature.max,
+//         température_min: espece.incubation.temperature.min,
+//         humidité_normale: espece.incubation.humidite.normale.standard,
+//         humidité_max: espece.incubation.humidite.max,
+//         humidité_min: espece.incubation.humidite.min,
+//         tolérance: espece.incubation.tolerance.temperature,
+//         tolérance_jours: espece.incubation.tolerance.jours
+//       }));
+//     }
+  
+//     const processedData = getHeaders(data);
+//     const headers = Object.keys(processedData[0]);
+  
+//     let tableHTML = '<table class="table table-bordered table-responsive-stack"><thead><tr>';
+//     headers.forEach(header => {
+//       tableHTML += `<th>${header}</th>`;
+//     });
+//     tableHTML += '</tr></thead><tbody>';
+  
+//     processedData.forEach(item => {
+//       tableHTML += '<tr>';
+//       headers.forEach(header => {
+//         const cellContent = typeof item[header] === 'object' ? JSON.stringify(item[header]) : item[header];
+//         tableHTML += `<td>${cellContent}</td>`;
+//       });
+//       tableHTML += '</tr>';
+//     });
+  
+//     tableHTML += '</tbody></table>';
+//     return tableHTML;
+//   }
+
+
+//   // Fonction pour activer le lien cliqué et désactiver les autres
+// function activateLink(event) {
+//     // Désactive toutes les classes 'active' des liens
+//     const navLinks = document.querySelectorAll('.nav-link');
+//     navLinks.forEach(link => link.classList.remove('active'));
+
+//     // Active le lien cliqué
+//     event.target.classList.add('active');
+// }
+
+// // Fonctions spécifiques à chaque lien
+// function handleNav1Click() {
+//     console.log('Lien 1 cliqué');
+// }
+
+// function handleNav2Click() {
+//     console.log('Lien 2 cliqué');
+// }
+
+// function handleNav3Click() {
+//     console.log('Lien 3 cliqué');
+// }
+
+// // Ajout des écouteurs d'événements pour chaque lien
+// document.getElementById('nav1').addEventListener('click', function(event) {
+//     activateLink(event);
+//     handleNav1Click();
+// });
+
+// document.getElementById('nav2').addEventListener('click', function(event) {
+//     activateLink(event);
+//     handleNav2Click();
+// });
+
+// document.getElementById('nav3').addEventListener('click', function(event) {
+//     activateLink(event);
+//     handleNav3Click();
+// });
+
 
 // Fonction pour créer le tableau HTML
 function createTable(data) {
-    const table = document.createElement('table');
-    const tableBody = document.createElement('tbody');
+  // Fonction pour obtenir les en-têtes du tableau
+  function getHeaders(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error('Les données ne sont pas un tableau ou sont vides');
+      return [];
+    }
 
-    // Créer l'en-tête du tableau
-    const headerRow = document.createElement('tr');
-    const headers = getHeaders(data);
+    const firstItem = data[0];
+
+    if (firstItem.hasOwnProperty('espèces')) {
+      console.log("C'est dataClaude");
+      return Claudedata(data);
+    } else if (firstItem.hasOwnProperty('espèce')) {
+      console.log("C'est data Google");
+      return googledata(data);
+    } else if (firstItem.hasOwnProperty('canne')) {
+      console.log("C'est dataGPT");
+      return gptdata(data);
+    } else {
+      console.error("Structure de données inconnue");
+      return [];
+    }
+  }
+
+  // Fonction pour traiter les données de GPT
+  function gptdata(dataGPT) {
+    return dataGPT.map(item => ({
+      espece: item.espece,
+      duree_incubation: item.duree_incubation,
+      temperature_normale: item.temperature.normale,
+      temperature_max: item.temperature.maximale,
+      temperature_min: item.temperature.minimale,
+      humidite_normale: `${item.humidite.normale.premiere_periode}, ${item.humidite.normale.derniere_periode}`,
+      humidite_max: item.humidite.maximale,
+      humidite_min: item.humidite.minimale,
+      tolerance_temperature: item.tolerance_ecarts.temperature,
+      tolerance_humidite: item.tolerance_ecarts.humidite
+    }));
+  }
+
+  // Fonction pour traiter les données de Google
+  function googledata(dataGoogle) {
+    return dataGoogle.map(item => ({
+      espèce: item.espèce,
+      durée_incubation: item.durée_incubation,
+      température_normale: item.température_normale,
+      température_max: item.température_max,
+      température_min: item.température_min,
+      humidité_normale: item.humidité_normale,
+      humidité_max: item.humidité_max,
+      humidité_min: item.humidité_min,
+      tolérance: item.tolérance,
+      tolérance_jours: item.tolérance_jours
+    }));
+  }
+
+  // Fonction pour traiter les données de Claude
+  function Claudedata(dataClaude) {
+    return dataClaude[0].especes.map(espece => ({
+      espèce: espece.nom,
+      durée_incubation: espece.incubation.jours,
+      température_normale: espece.incubation.temperature.normale,
+      température_max: espece.incubation.temperature.max,
+      température_min: espece.incubation.temperature.min,
+      humidité_normale: espece.incubation.humidite.normale.standard,
+      humidité_max: espece.incubation.humidite.max,
+      humidité_min: espece.incubation.humidite.min,
+      tolérance: espece.incubation.tolerance.temperature,
+      tolérance_jours: espece.incubation.tolerance.jours
+    }));
+  }
+
+  const processedData = getHeaders(data);
+  if (processedData.length === 0) return ''; // Vérifie si les données sont valides
+
+  let tableHTML = '<table class="table table-bordered table-responsive-stack table-primary"><thead><tr>';
+  const headers = Object.keys(processedData[0]);
+
+  headers.forEach(header => {
+    tableHTML += `<th>${header}</th>`;
+  });
+  tableHTML += '</tr></thead><tbody>';
+
+  processedData.forEach(item => {
+    tableHTML += '<tr>';
     headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
+      const cellContent = typeof item[header] === 'object' ? JSON.stringify(item[header]) : item[header];
+      tableHTML += `<td>${cellContent}</td>`;
     });
-    tableBody.appendChild(headerRow);
+    tableHTML += '</tr>';
+  });
 
-    // Créer les lignes de données
-    const rows = getRows(data);
-    rows.forEach(item => {
-        const row = createTableRow(item);
-        tableBody.appendChild(row);
+  tableHTML += '</tbody></table>';
+  return tableHTML;
+}
+
+// Fonction pour générer le tableau
+function generateTable(dataItem) {
+  const container = document.getElementById('table-container');
+  if (!container) {
+    console.error('Le conteneur "table-container" n\'existe pas.');
+    return;
+  }
+
+  container.innerHTML = '';
+
+  let data;
+  if (dataItem === 1) {
+    data = dataGoogle;
+  } else if (dataItem === 2) {
+    data = dataGPT;
+  } else if (dataItem === 3) {
+    data = dataClaude;
+  } else {
+    console.error('Données invalides.');
+    return;
+  }
+
+  container.innerHTML = createTable(data);
+}
+
+// Fonction pour activer le lien cliqué et désactiver les autres
+function activateLink(event) {
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => link.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Ajout des écouteurs d'événements pour chaque lien
+document.getElementById('google').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(1);
+});
+
+document.getElementById('gpt').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(2);
+});
+
+document.getElementById('claude').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(3);
+});
+
+
+//yyyyyyyyyyyyyy
+// Fonction pour créer le tableau HTML
+function createTable(data) {
+  // Fonction pour obtenir les en-têtes du tableau
+  function getHeaders(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error('Les données ne sont pas un tableau ou sont vides');
+      return [];
+    }
+
+    const firstItem = data[0];
+
+    if (firstItem.hasOwnProperty('espèces')) {
+      console.error("Structure de données inconnue");
+      return [];
+    } else if (firstItem.hasOwnProperty('espèce')) {
+      console.log("C'est data Google");
+      return googledata(data);
+    } else if (firstItem.hasOwnProperty('canne')) {
+      console.log("C'est dataGPT");
+      return gtpdata(data);
+    } else {
+      console.log("C'est dataClaude");
+      return Claudedata(data);
+    }
+  }
+
+  // Fonction pour traiter les données de GPT
+  function gtpdata(dataGPT) {
+    const result = dataGPT.map(item => ({
+      espece: item.espece,
+      duree_incubation: item.duree_incubation,
+      temperature_normale: item.temperature.normale,
+      temperature_max: item.temperature.maximale,
+      temperature_min: item.temperature.minimale,
+      humidite_normale: `${item.humidite.normale.premiere_periode}, ${item.humidite.normale.derniere_periode}`,
+      humidite_max: item.humidite.maximale,
+      humidite_min: item.humidite.minimale,
+      tolerance_temperature: item.tolerance_ecarts.temperature,
+      tolerance_humidite: item.tolerance_ecarts.humidite
+    }));
+    console.table(result);
+    return result;
+  }
+
+  // Fonction pour traiter les données de Google
+  function googledata(dataGoogle) {
+    const result = dataGoogle.map(item => ({
+      espèce: item.espèce,
+      durée_incubation: item.durée_incubation,
+      température_normale: item.température_normale,
+      température_max: item.température_max,
+      température_min: item.température_min,
+      humidité_normale: item.humidité_normale,
+      humidité_max: item.humidité_max,
+      humidité_min: item.humidité_min,
+      tolérance: item.tolérance,
+      tolérance_jours: item.tolérance_jours
+    }));
+    console.table(result);
+    return result;
+  }
+
+  // Fonction pour traiter les données de Claude
+  function Claudedata(dataClaude) {
+    const result = dataClaude[0].especes.map(espece => ({
+      espèce: espece.nom,
+      durée_incubation: espece.incubation.jours,
+      température_normale: espece.incubation.temperature.normale,
+      température_max: espece.incubation.temperature.max,
+      température_min: espece.incubation.temperature.min,
+      humidité_normale: espece.incubation.humidite.normale.standard,
+      humidité_max: espece.incubation.humidite.max,
+      humidité_min: espece.incubation.humidite.min,
+      tolérance: espece.incubation.tolerance.temperature,
+      tolérance_jours: espece.incubation.tolerance.jours
+    }));
+    console.table(result);
+    return result;
+  }
+
+  const processedData = getHeaders(data);
+  if (processedData.length === 0) return ''; // Vérifie si les données sont valides
+
+  let tableHTML = '<table class="table table-bordered table-responsive-stack table-primary"><thead><tr>';
+  const headers = Object.keys(processedData[0]);
+
+  headers.forEach(header => {
+    tableHTML += `<th>${header}</th>`;
+  });
+  tableHTML += '</tr></thead><tbody>';
+
+  processedData.forEach(item => {
+    tableHTML += '<tr>';
+    headers.forEach(header => {
+      const cellContent = typeof item[header] === 'object' ? JSON.stringify(item[header]) : item[header];
+      tableHTML += `<td>${cellContent}</td>`;
     });
+    tableHTML += '</tr>';
+  });
 
-    table.appendChild(tableBody);
-    return table;
+  tableHTML += '</tbody></table>';
+  return tableHTML;
 }
 
-// Fonction pour obtenir les en-têtes du tableau
-function getHeaders(data) {
-    if (Array.isArray(data)) {
-        return Object.keys(data[0]);
-    } else if (typeof data[0] === 'object') {
-        return Object.keys(data[0]);
-    } else {
-        return Object.keys(data);
-    }
+// Fonction pour générer le tableau
+function generateTable(dataItem) {
+  const container = document.getElementById('table-container');
+  if (!container) {
+    console.error('Le conteneur "table-container" n\'existe pas.');
+    return;
+  }
+
+  container.innerHTML = '';
+
+  let data;
+  if (dataItem === 1) {
+    data = dataGoogle;
+  } else if (dataItem === 2) {
+    data = dataGPT;
+  } else if (dataItem === 3) {
+    data = dataClaude;
+  } else {
+    console.error('Données invalides.');
+    return;
+  }
+
+  container.innerHTML = createTable(data);
 }
 
-// Fonction pour obtenir les lignes de données
-function getRows(data) {
-    if (Array.isArray(data)) {
-        return data;
-    } else if (typeof data[0] === 'object') {
-        return Object.values(data[0]);
-    } else {
-        return [data];
-    }
+// Fonction pour activer le lien cliqué et désactiver les autres
+function activateLink(event) {
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => link.classList.remove('active'));
+  event.target.classList.add('active');
 }
 
-// Obtenir l'élément HTML où tu veux insérer le tableau
-const container = document.getElementById('table-container'); // Remplace par l'ID de ton conteneur
+// Ajout des écouteurs d'événements pour chaque lien
+document.getElementById('google').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(1);
+});
 
-// Définir la variable test pour sélectionner les données
-const test = 3; // Changer cette valeur pour tester différents jeux de données
+document.getElementById('gpt').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(2);
+});
 
-let dataitem;
-if (test === 1) {
-    dataitem = data1;
-} else if (test === 2) {
-    dataitem = data2;
-} else {
-    dataitem = data3;
-}
-
-// Créer le tableau et l'ajouter au conteneur
-container.innerHTML = '';
-const table = createTable(dataitem);
-container.appendChild(table);
+document.getElementById('claude').addEventListener('click', function(event) {
+  activateLink(event);
+  generateTable(3);
+});
