@@ -178,3 +178,246 @@ function createTable(data) {
     activateLink(event);
     handleNav3Click();
   });
+
+
+
+
+
+  ParamForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+  
+    const { date_debut_v, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v } = updateConsoleLog();
+  
+    if (date_debut_v) {
+      const formattedDate = dateformat(date_debut_v);
+      let isok = checkIfisRunning(formattedDate)
+        .then(isRunning => {
+          if (isRunning) {
+            // Créer le popup
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+  
+            const popupMessage = document.createElement('p');
+            popupMessage.textContent = "Un processus est en cours. Voulez-vous continuer ?";
+  
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('buttons-container');
+  
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = "Annuler";
+            cancelButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+            });
+  
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = "Oui";
+            confirmButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+              postdata(formattedDate, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v);
+            });
+  
+            buttonsContainer.appendChild(cancelButton);
+            buttonsContainer.appendChild(confirmButton);
+  
+            popup.appendChild(popupMessage);
+            popup.appendChild(buttonsContainer);
+  
+            document.body.appendChild(popup);
+          } else {
+            message_.textContent = "Un processus est en cours";
+          }
+        });
+    }
+  });
+
+
+
+  ParamForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+  
+    const { date_debut_v, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v } = updateConsoleLog();
+  
+    if (date_debut_v) {
+      const formattedDate = dateformat(date_debut_v);
+      let isok = checkIfisRunning(formattedDate)
+        .then(isRunning => {
+          if (isRunning) {
+            // Créer le popup
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+  
+            // Centrer le popup
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.backgroundColor = 'white';
+            popup.style.padding = '20px';
+            popup.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.5)';
+            popup.style.zIndex = '9999';
+  
+            const popupMessage = document.createElement('p');
+            popupMessage.textContent = "Un processus est en cours. Voulez-vous continuer ?";
+  
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('buttons-container');
+  
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = "Annuler";
+            cancelButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+            });
+  
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = "Oui";
+            confirmButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+              postdata(formattedDate, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v);
+            });
+  
+            buttonsContainer.appendChild(cancelButton);
+            buttonsContainer.appendChild(confirmButton);
+  
+            popup.appendChild(popupMessage);
+            popup.appendChild(buttonsContainer);
+  
+            document.body.appendChild(popup);
+          } else {
+            message_.textContent = "Un processus est en cours";
+          }
+        });
+    }
+  });
+
+
+
+  ParamForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+  
+    const { date_debut_v, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v } = updateConsoleLog();
+  
+    if (date_debut_v) {
+      const formattedDate = dateformat(date_debut_v);
+      let isok = checkIfisRunning(formattedDate)
+        .then(isRunning => {
+          if (isRunning) {
+            // Créer le popup
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+  
+            // Ajouter le style pour centrer le popup
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.backgroundColor = 'white';
+            popup.style.padding = '20px';
+            popup.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popup.style.zIndex = '9999';
+  
+            const popupMessage = document.createElement('p');
+            popupMessage.textContent = "Un processus est en cours. Voulez-vous continuer ?";
+  
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('buttons-container');
+  
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = "Annuler";
+            cancelButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+            });
+  
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = "Oui";
+            confirmButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+              postdata(formattedDate, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v);
+            });
+  
+            buttonsContainer.appendChild(cancelButton);
+            buttonsContainer.appendChild(confirmButton);
+  
+            popup.appendChild(popupMessage);
+            popup.appendChild(buttonsContainer);
+  
+            document.body.appendChild(popup);
+          } else {
+            message_.textContent = "Un processus est en cours";
+          }
+        });
+    }
+  });
+
+
+
+  ParamForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+  
+    const { date_debut_v, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v } = updateConsoleLog();
+  
+    if (date_debut_v) {
+      const formattedDate = dateformat(date_debut_v);
+      let isok = checkIfisRunning(formattedDate)
+        .then(isRunning => {
+          if (isRunning) {
+            // Créer le popup
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+  
+            // Ajouter le style pour centrer le popup
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.backgroundColor = 'white';
+            popup.style.padding = '20px';
+            popup.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popup.style.zIndex = '9999';
+  
+            const popupMessage = document.createElement('p');
+            popupMessage.textContent = "Un processus est en cours. Voulez-vous continuer ?";
+  
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('buttons-container');
+            buttonsContainer.style.display = 'flex';
+            buttonsContainer.style.justifyContent = 'center';
+            buttonsContainer.style.marginTop = '20px';
+  
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = "Annuler";
+            cancelButton.style.backgroundColor = '#f44336';
+            cancelButton.style.color = 'white';
+            cancelButton.style.border = 'none';
+            cancelButton.style.padding = '10px 20px';
+            cancelButton.style.borderRadius = '5px';
+            cancelButton.style.marginRight = '5px';
+            cancelButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+            });
+  
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = "Oui";
+            confirmButton.style.backgroundColor = '#4CAF50';
+            confirmButton.style.color = 'white';
+            confirmButton.style.border = 'none';
+            confirmButton.style.padding = '10px 20px';
+            confirmButton.style.borderRadius = '5px';
+            confirmButton.style.marginLeft = '5px';
+            confirmButton.addEventListener('click', () => {
+              popup.remove(); // Fermer le popup
+              postdata(formattedDate, selectElement_v, temperature_v, humidite_v, retournement_v, jrs_eclo_v);
+            });
+  
+            buttonsContainer.appendChild(cancelButton);
+            buttonsContainer.appendChild(confirmButton);
+  
+            popup.appendChild(popupMessage);
+            popup.appendChild(buttonsContainer);
+  
+            document.body.appendChild(popup);
+          } else {
+            message_.textContent = "Un processus est en cours";
+          }
+        });
+    }
+  });

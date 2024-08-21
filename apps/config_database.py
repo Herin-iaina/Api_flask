@@ -140,7 +140,7 @@ def creationTablepsycopg2(conn):
         cur.execute("""
             CREATE TABLE stepper (
                 id SERIAL PRIMARY KEY,
-                start_date DATE,
+                start_date INTERVAL,
                 status BOOLEAN
             )
         """)
@@ -154,6 +154,7 @@ def creationTablepsycopg2(conn):
         # Création de la table "parameter_data"
         cur.execute("""
             CREATE TABLE parameter_data (
+                id SERIAL PRIMARY KEY,
                 temperature FLOAT,
                 humidity FLOAT,
                 start_date DATE,

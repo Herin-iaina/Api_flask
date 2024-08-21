@@ -50,3 +50,5 @@ loginForm.addEventListener('submit', (event) => { // Changé 'login-btn' en 'sub
         errorMessage.textContent = 'Nom d\'utilisateur ou mot de passe incorrect';
       });
 });
+
+
