@@ -421,3 +421,104 @@ function createTable(data) {
         });
     }
   });
+
+
+
+
+  // Authentification avec un serveur OAuth2
+async function authenticate(username, password) {
+  const response = await fetch('/oauth/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      grant_type: 'password',
+      username: username,
+      password: password
+    })
+  });
+
+  if (response.ok) {
+    const { access_token } = await response.json();
+    return access_token;
+  } else {
+    throw new Error('Authentification échouée');
+  }
+}
+
+// Appel de l'API avec le jeton d'accès
+async function fetchProtectedData() {
+  const accessToken = await authenticate('mon_utilisateur', 'mon_mot_de_passe');
+
+  const response = await fetch('/api/protected-data', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+
+  if (response.ok) {
+    return await response.json();
+  } else {
+    throw new Error('Accès aux données protégées refusé');
+  }
+}
+
+
+// Fonction pour obtenir le token JWT
+async function getAccessToken(username, password) {
+  try {
+      const response = await fetch('http://localhost:5000/oauth/token', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+              'username': username,
+              'password': password
+          })
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to authenticate');
+      }
+
+      const data = await response.json();
+      return data.access_token;
+  } catch (error) {
+      console.error('Error:', error);
+  }
+}
+
+// Fonction pour appeler l'endpoint protégé avec le token JWT
+async function getProtectedData(token) {
+  try {
+      const response = await fetch('http://localhost:5000/api/protected-data', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to fetch protected data');
+      }
+
+      const data = await response.json();
+      console.log('Protected data:', data);
+  } catch (error) {
+      console.error('Error:', error);
+  }
+}
+
+// Utilisation des fonctions pour authentification et appel de données protégées
+(async () => {
+  const username = 'mon_utilisateur';  // Remplacez par le nom d'utilisateur approprié
+  const password = 'mon_mot_de_passe'; // Remplacez par le mot de passe approprié
+
+  const token = await getAccessToken(username, password);
+  
+  if (token) {
+      await getProtectedData(token);
+  }
+})();

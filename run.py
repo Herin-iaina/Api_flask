@@ -7,6 +7,7 @@ from apps import config_database
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import os
 from datetime import timedelta
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
 app = Flask(__name__)
@@ -18,6 +19,10 @@ api_keys = [
     {'key': 'Votre_Cle_API'},
     
 ]
+
+# Configuration de JWT
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+jwt = JWTManager(app)
 
 @app.route("/")
 def hello():

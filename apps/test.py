@@ -202,3 +202,45 @@ GROUP BY
 ORDER BY
     heure;
     """
+
+
+
+import os
+from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+
+app = Flask(__name__)
+
+# Configuration de JWT
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+jwt = JWTManager(app)
+
+# Endpoint d'authentification
+@app.route('/oauth/token', methods=['POST'])
+def get_access_token():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    # Vérification des identifiants de l'utilisateur
+    if username == 'mon_utilisateur' and password == 'mon_mot_de_passe':
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+    else:
+        return jsonify({'message': 'Authentification échouée'}), 401
+
+# Endpoint protégé
+@app.route('/api/protected-data', methods=['GET'])
+@jwt_required()
+def get_protected_data():
+    current_user = get_jwt_identity()
+    # Récupérer les données protégées à partir des variables d'environnement
+    api_key_1 = os.environ.get('API_KEY_1')
+    api_key_2 = os.environ.get('API_KEY_2')
+    return jsonify({
+        'message': 'Données protégées',
+        'api_key_1': api_key_1,
+        'api_key_2': api_key_2
+    })
+
+if __name__ == '__main__':
+    app.run()
