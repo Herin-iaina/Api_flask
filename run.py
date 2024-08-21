@@ -354,6 +354,10 @@ def create_parameter():
 
         espece_name = espece_mapping.get(espece)
         dayclose = remaindate.get(espece_name)
+        try:
+            dayclose = int(dayclose)
+        except (TypeError, ValueError) as e :
+            dayclose = 28
         # print(dayclose)
 
         if dayclose < 0 :
