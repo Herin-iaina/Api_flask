@@ -169,27 +169,27 @@
               <div class="box">
                 <div class="input-group input-group-sm mb-3">
                   <span class="input-group-text" id="temperature-label">Temperature</span>
-                  <input type="number" step= "any" max="50" class="form-control" aria-label="Temperature" aria-describedby="temperature-label" id="temperature">
+                  <input type="number" step= "any" max="50" min="1" required class="form-control" aria-label="Temperature" aria-describedby="temperature-label" id="temperature">
                 </div>
                 <div class="input-group input-group-sm mb-3">
                   <span class="input-group-text" id="humidite-label">Humidite</span>
-                  <input type="number" step= "any" max="80" class="form-control" aria-label="Humidite" aria-describedby="humidite-label" id="humidite">
+                  <input type="number" step= "any" max="80" min="1" required class="form-control" aria-label="Humidite" aria-describedby="humidite-label" id="humidite">
                 </div>
               </div>
               <div class="box">
                 <div id="Max-Temp">
                   <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="date-debut-label">Date de début</span>
-                    <input type="datetime-local" class="form-control" aria-label="Date de début" aria-describedby="date-debut-label" id="date-debut">
+                    <input type="datetime-local" class="form-control" required aria-label="Date de début" aria-describedby="date-debut-label" id="date-debut">
                   </div>
                   <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="retournement-label">Retournement</span>
-                    <input type="number" max="10" class="form-control" aria-label="Retournement" aria-describedby="retournement-label" id="retournement">
+                    <input type="number" max="10" min="1" required class="form-control" aria-label="Retournement" aria-describedby="retournement-label" id="retournement">
                   </div>
                 </div>
                 <div class="input-group input-group-sm mb-3">
                   <span class="input-group-text" id="dayclose-label">Jours d'éclosion</span>
-                  <input type="number" max="50" min="1"  class="form-control" aria-label="Retournement" aria-describedby="dayclose-label" id="dayclose">
+                  <input type="number" max="50" min="1" required  class="form-control" aria-label="eclosion" aria-describedby="dayclose-label" id="dayclose">
                 </div>
               </div>
               </div>

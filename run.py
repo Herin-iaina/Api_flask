@@ -370,11 +370,11 @@ def create_parameter():
             return jsonify({'message': 'Invalid date format'}), 400  # Bad Request
 
         data_to_insert = {
-            'temperature': temperature,
-            'humidity': humidity,
+            'temperature': temperature if temperature > 0 else 23 ,
+            'humidity': humidity if humidity > 0 else 40,
             'start_date': formatted_date,
             'stat_stepper': stat_stepper,
-            'number_stepper': number_stepper,
+            'number_stepper': number_stepper if number_stepper > 0 else 3,
             'espece': espece_name,
             'timetoclose' : dayclose
         }
