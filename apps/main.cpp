@@ -1,30 +1,33 @@
 #include <WiFi.h>
-#include <WiFiClient.h>
+// #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include <AccelStepper.h>
 #include "DHT.h"
+#include <HTTPClient.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 
 // Pin Definitions
 #define DHT_SENSOR_TYPE DHT22
-#define DHT_1_PIN_DATA  0
+#define DHT_1_PIN_DATA   15//5
 #define DHT_2_PIN_DATA  2
 #define DHT_3_PIN_DATA  4
 #define DHT_4_PIN_DATA  5
-#define STEPPER_PIN_1 12
-#define STEPPER_PIN_2 13
-#define FAN_PIN 14
-#define HUMIDIFIER_PIN 15
+#define STEPPER_PIN_1 32
+#define STEPPER_PIN_2 33
+#define FAN_PIN 13
+#define HUMIDIFIER_PIN 12
+// Définir la broche pour le bouton
+#define buttonPin  23
 
 // WiFi credentials
-const char* ssid = "Airbox-4D56";
-const char* password = "1234567";
+const char* ssid = "Airbox-AB84";
+const char* password = "76jVJPUReEJb";
 
 // Server URL and endpoint
-const char* serverURL = "http://example.com";
-const char* endpoint = "/api";
+const char* serverURL = "http://192.168.1.184:5000";
+const char* endpoint = "/values";
 // Spécifier l'adresse IP et le port du serveur
 IPAddress serverIP(127, 0, 0, 1); 
 int serverPort = 5000; 
@@ -74,8 +77,9 @@ void setup() {
   // Initialize fan and humidifier pins
   pinMode(FAN_PIN, OUTPUT);
   pinMode(HUMIDIFIER_PIN, OUTPUT);
-  digitalWrite(FAN_PIN, LOW);
-  digitalWrite(HUMIDIFIER_PIN, LOW);
+  digitalWrite(FAN_PIN, HIGH);
+  digitalWrite(HUMIDIFIER_PIN, HIGH);
+  pinMode(pushButton, INPUT);
 }
 
 void loop() {
@@ -92,17 +96,21 @@ void loop() {
   // Check if any sensor values are invalid
     if (isnan(humidity_1) || isnan(temperature_1)) {
       humidity_1  = 0;
+      temperature_1 = 0;
       numFailedSensors++;
     }
     if (isnan(humidity_2) || isnan(temperature_2)) {
+      temperature_2 = 0;
       humidity_2 = 0;
       numFailedSensors++;
     }
     if (isnan(humidity_3) || isnan(temperature_3)) {
+      temperature_3 = 0;
       humidity_3 = 0;
       numFailedSensors++;
     }
     if (isnan(humidity_4) || isnan(temperature_4)) {
+      temperature_4 = 0;
       humidity_4 = 0;
       numFailedSensors++;
     }
@@ -161,68 +169,46 @@ void loop() {
   // Serialize JSON payload
   String jsonPayload;
   serializeJson(payload, jsonPayload);
-  Serial.println(jsonPayload);
+  //Serial.println(jsonPayload);
 
- // Établir une connexion TCP/IP
-  WiFiClient client;
-  if (!client.connect(serverIP, serverPort)) {
-    Serial.println("Impossible de se connecter au serveur");
-    return;
-  }
+//  // Établir une connexion TCP/IP
 
-  // Send POST request to server
-  //WiFiClient client;
-  //if (client.connect(serverURL, 80)) {
-   // Serial.println("Connected to server");
-   // client.println("POST " + String(endpoint) + " HTTP/1.1");
-   // client.println("Host: " + String(serverURL));
- //   client.println("Content-Type: application/json");
-   // client.println("Content-Length: " + String(jsonPayload.length()));
-  //  client.println();
-  //  client.println(jsonPayload);
-  //  client.println();
- // } else {
-   // Serial.println("Failed to connect to server");
- // }
+    HTTPClient http;
 
-  // Initialiser l'objet HTTPClient
-  HTTPClient http;
+    //String url = "http://" + String(serverIP) + ":" + String(serverPort) + endpoint;
+    String url = String(serverURL)+ String(endpoint);
+     http.begin(url);
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("x-api-key", apiKey);
 
-  // Commencer une nouvelle requête POST
-  http.begin("http://" + String(serverIP) + ":" + String(serverPort) + "/data");
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("x-api-key", apiKey);  // Ajouter la clé API comme en-tête
-    // Envoyer la requête POST avec la charge utile JSON
-  int httpResponseCode = http.POST(jsonPayload);
+    // Envoi de la requête HTTP POST
+    int httpResponseCode = http.POST(jsonPayload);
 
   if (httpResponseCode > 0) {
-    Serial.print("Code de réponse HTTP : ");
+    Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
 
-    // Lire la réponse du serveur
     String response = http.getString();
-    Serial.println("Réponse du serveur :");
+    Serial.println("Server response:");
     Serial.println(response);
   } else {
-    Serial.print("Erreur lors de la requête HTTP : ");
+    Serial.print("HTTP POST Request failed: ");
     Serial.println(httpResponseCode);
   }
-
   // Libérer les ressources
-  http.end();
-  delay(5000); // Attendre 5 secondes avant la prochaine requête
-}
+  //http.end();
+
 
   // Initialiser l'objet HTTPClient
-  HTTPClient http;
+  // HTTPClient http;
+  url = String(serverURL) + "/getdata" + "?api_key=" + String(apiKey);
 
-  url =   String url = "http://" + String(serverIP) + ":" + String(serverPort) + "/getdata" + "?api_key=" + String(apiKey);
-
-// Commencer une nouvelle requête GET
+ // Commencer une nouvelle requête GET
   http.begin(url);
 
   // Envoyer la requête GET
-  int httpResponseCode = http.GET();
+   httpResponseCode = http.GET();
 
   if (httpResponseCode > 0 && httpResponseCode == 202) {
     Serial.print("Code de réponse HTTP : ");
@@ -232,73 +218,73 @@ void loop() {
     String response = http.getString();
     Serial.println("Réponse du serveur :");
     Serial.println(response);
-    DynamicJsonDocument response(1024);
-    DeserializationError error = deserializeJson(response, responseLine)
+
+    DynamicJsonDocument responses(1024);
+
+    // Désérialiser la réponse JSON
+    DeserializationError error = deserializeJson(responses, response);
 
     if (!error) {
-      String motorStatus = response["Motor"];
-      String fanStatus = response["FAN"];
-      String humidityStatus = response["Humidity"];
+      String motorStatus = responses["Motor"];
+      String fanStatus = responses["FAN"];
+      String humidityStatus = responses["Humidity"];
 
-      // Motor control
+      // Contrôle du moteur
       if (motorStatus == "ON") {
-        // Move stepper motor
+        // Bouger le moteur pas à pas
         stepper.moveTo(200);
         stepper.setSpeed(100);
         stepper.runToPosition();
-        
       } else {
-        // Stop stepper motor
+        // Arrêter le moteur pas à pas
         stepper.setSpeed(0);
         stepper.setCurrentPosition(0);
       }
 
-      // Fan control
+      // Contrôle du ventilateur (relays ON -> true = NC rigth)
       if (fanStatus == "ON" ) {
-        // Turn on fan
-        digitalWrite(FAN_PIN, HIGH);
+        // Allumer le ventilateur
+        digitalWrite(FAN_PIN, LOW);
         fanOn = true;
       } else {
-        // Turn off fan
-        digitalWrite(FAN_PIN, LOW);
+        // Éteindre le ventilateur
+        digitalWrite(FAN_PIN, HIGH);
         fanOn = false;
       }
 
-      // Humidity control
+      // Contrôle de l'humidificateur (relays ON -> true = Nc)
       if (humidityStatus == "ON" ) {
-        // Turn on humidifier
-        digitalWrite(HUMIDIFIER_PIN, HIGH);
+        // Allumer l'humidificateur
+        digitalWrite(HUMIDIFIER_PIN, LOW);
         humidifierOn = true;
       } else {
-        // Turn off humidifier
-        digitalWrite(HUMIDIFIER_PIN, LOW);
+        // Éteindre l'humidificateur
+        digitalWrite(HUMIDIFIER_PIN, HIGH);
         humidifierOn = false;
       }
     }
-
   } else {
-
-    Serial.print("Erreur lors de la requête HTTP : ");
+    Serial.print("Erreur lors de la requête HTTP GET : ");
     Serial.println(httpResponseCode);
     Serial.println("no server response is received");
-    
-    if (avgTemperature > 0 && avgTemperature < 37.7) {
-      // Turn on fan
-      digitalWrite(FAN_PIN, HIGH);
+
+    if (avgTemperature < 36 and numFailedSensors < 4 ) {
+      // Allumer le ventilateur si la température moyenne est dans la plage souhaitée
+      digitalWrite(FAN_PIN, LOW);
       fanOn = true;
     } else {
-      // Turn off fan
-      digitalWrite(FAN_PIN, LOW);
+      // Éteindre le ventilateur
+      digitalWrite(FAN_PIN, HIGH);
       fanOn = false;
     }
 
-    if (avgHumidity > 0 && avgHumidity < 45) {
-      // Turn on humidifier
-      digitalWrite(HUMIDIFIER_PIN, HIGH);
+    if (avgHumidity < 45 and numFailedSensors < 4 ) {
+      // Allumer l'humidificateur si l'humidité moyenne est dans la plage souhaitée
+      digitalWrite(HUMIDIFIER_PIN, LOW);
       humidifierOn = true;
     } else {
-      // Turn off humidifier
-      digitalWrite(HUMIDIFIER_PIN, LOW);
+      // Éteindre l'humidificateur
+      digitalWrite(HUMIDIFIER_PIN, HIGH);
       humidifierOn = false;
     }
   }
@@ -306,15 +292,6 @@ void loop() {
   // Libérer les ressources
   http.end();
 
-  delay(5000); // Attendre 5 secondes avant la prochaine requête
-}
-
-
-
-  // Use backup logic if no server response is received
-  if (!client.connected()) {
-    
-  }
 
 
   // Print sensor values and status
@@ -351,7 +328,8 @@ void loop() {
   Serial.print("Failed Sensors : ");
   Serial.println(numFailedSensors);
 
-      // tempetarure moyenne
+ // Affichage des valeurs sur 6 écrans successifs
+        // tempetarure moyenne
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Average T:");
@@ -421,13 +399,22 @@ void loop() {
   lcd.print("%");
   delay(2000);
 
+  int buttonState = digitalRead(buttonPin);  // Lire l'état du bouton
+    // Si le bouton est appuyé, faire tourner le moteur
+  if (buttonState == LOW) {
+      stepper.moveTo(200);
+      stepper.setSpeed(100);
+      stepper.runToPosition(); // Déplacer le moteur de 200 pas
+  }
+  
+
   // Wait for the stepper motor to complete its movement
-  while (stepper.isRunning()) {
+  while (stepper.isRunning() ) {
     stepper.run();
   }
 
   numFailedSensors = 0;
 
   // Wait for a certain period before sending the next request
-  delay(5000);
+  delay(30000);
 }
