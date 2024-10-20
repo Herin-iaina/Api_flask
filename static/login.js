@@ -1,61 +1,4 @@
-// document.addEventListener("DOMContentLoaded", function() {
-//     // Use let or const for better scoping
-//     const modalContainer = document.getElementById("modalContainer");
-//     const btn = document.getElementById("loginBtn");
-  
-//     // Function to load the modal
-//     function loadModal() {
-//       const xhr = new XMLHttpRequest();
-//       xhr.open('GET', '../templates/login.html', true);
-  
-//       xhr.onreadystatechange = function() {
-//         if (xhr.readyState === 4) {
-//           if (xhr.status === 200) {
-//             modalContainer.innerHTML = xhr.responseText;
-  
-//             // ... rest of the code for handling modal functionality
-//             // Show the pop-up (toggle visibility)
-//           loginPopup.classList.remove("hidden");
-//           } else {
-//             console.error("Failed to load login.html", xhr.statusText);
-//             // Optionally display an error message to the user
-//           }
-//         }
-//       };
-  
-//       xhr.onerror = function() {
-//         console.error("Failed to load login.html");
-//         // Optionally display an error message to the user
-//       };
-  
-//       xhr.send();
-//     }
-  
-//     // Ouverture du modal lors du clic sur le bouton
-//     // ... votre code existant ...
-
-// btn.onclick = function() {
-//     Swal.fire({
-//         title: 'Connexion',
-//         html: `
-//             <input type="text" id="email" class="swal2-input" placeholder="Email">
-//             <input type="password" id="password" class="swal2-input" placeholder="Mot de passe">
-//         `,
-//         showCancelButton: true,
-//         confirmButtonText: 'Se connecter',
-//         preConfirm: () => {
-//             // Traitement des données du formulaire
-//         }
-//     });
-// };
-
-  
-//   });
-
-
-
-
-    /// Sélectionner les éléments du formulaire
+// Sélectionner les éléments du formulaire
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const rememberMeInput = document.getElementById('rememberMe');
@@ -88,6 +31,12 @@ loginForm.addEventListener('submit', (event) => { // Changé 'login-btn' en 'sub
         return response.json();
       })
       .then(data => {
+        if (data.is_authenticated) {
+          // Rediriger vers la page de paramètres si l'utilisateur est authentifié
+          window.location.href = '/parametres';
+        } else {
+          
+        }
         if (data.success) {
           // Rediriger vers la page de paramètres si la connexion est réussie
           window.location.href = '/parametre';
@@ -101,3 +50,5 @@ loginForm.addEventListener('submit', (event) => { // Changé 'login-btn' en 'sub
         errorMessage.textContent = 'Nom d\'utilisateur ou mot de passe incorrect';
       });
 });
+
+

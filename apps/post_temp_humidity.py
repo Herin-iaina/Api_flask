@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 
 def add_data(data_to_insert) :
 
-    conn = get_db_connection()
+    
     # Requête SQL pour l'insertion des données sans spécifier l'identifiant (id)
     sql_insert_query = """
         INSERT INTO data_temp (sensor, temperature, humidity, date_serveur, average_temperature, 
@@ -21,17 +21,10 @@ def add_data(data_to_insert) :
         VALUES (%(sensor)s, %(temperature)s, %(humidity)s, %(date_serveur)s, 
         %(average_temperature)s, %(average_humidity)s, %(fan_status)s, %(humidifier_status)s, %(numfailedsensors)s )
     """
-
-    # data_to_insert = {
-    #     'sensor': 'sensor_name',
-    #     'temperature': 25.5,
-    #     'humidity': 50.32,
-    #     'date_serveur': '2023-11-16 12:31:00'  # Remplacez par la date appropriée
-    # }
-  
-    
+   
     try:
         # Créer un curseur pour exécuter la requête SQL
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             # Exécuter la requête SQL avec les données à insérer
             cursor.execute(sql_insert_query, data_to_insert)
@@ -61,14 +54,19 @@ def post_stepper_status():
     delai = 60 * 60
 
     select_parameter = """
-    SELECT   stat_stepper,number_stepper
-    FROM parameter_data ORDER BY id DESC LIMIT 1
-    """
+        SELECT   stat_stepper,number_stepper
+        FROM parameter_data ORDER BY id DESC LIMIT 1
+        """
     select_stepper = """ SELECT id, start_date, status FROM stepper ORDER BY id DESC LIMIT 1 """
-    update_stepper = """UPDATE stepper SET start_date = :start_date, status = :status WHERE id = :id """
+    update_stepper = """ 
+        UPDATE stepper 
+        SET start_date = %(start_date)s, status = %(status)s 
+        WHERE id = %(id)s 
+    """
     
 
     def default_(date_on = None) :
+
         date_now = datetime.datetime.now()
         # Convert the time difference to a formatted string
         formatted_date = date_now.strftime("%H:%M")
@@ -144,10 +142,12 @@ def post_stepper_status():
                         # Ajouter des heures
                         heure_depart_dt = datetime.datetime.combine(datetime.datetime.today(), heure_depart)
                         heure_arrivee = heure_depart_dt + datetime.timedelta(hours= delai)
-                        update_stepper['id'] = id_stepper
-                        update_stepper['start_date'] = heure_arrivee.time()
-                        update_stepper['status'] = stepper
-                        cursor.execute(update_stepper)
+                        update_data = {
+                            'id': id_stepper,
+                            'start_date': heure_arrivee,
+                            'status': stepper
+                        }
+                        cursor.execute(update_stepper,update_data)
                         conn.commit()
                         
     except Exception as e:
@@ -302,67 +302,102 @@ def get_all_data(date_ini, date_end):
 def create_parameter(data_to_insert = None):
 
     date_now = datetime.datetime.today()
+
+    def date_values():
+        # Arrondit un objet datetime à l'intervalle de 6 heures
+        now_timedelta = datetime.timedelta(hours=date_now.hour, minutes=date_now.minute, seconds=date_now.second)
+        print(now_timedelta,datetime.timedelta(hours=0), datetime.timedelta(hours=6) )
+        if now_timedelta > datetime.timedelta(hours=0) and now_timedelta <= datetime.timedelta(hours=6) :
+            now_timedelta = datetime.timedelta(hours=6)
+        elif now_timedelta > datetime.timedelta(hours=6) and now_timedelta <= datetime.timedelta(hours=12) :
+            now_timedelta = datetime.timedelta(hours=12)
+        elif now_timedelta > datetime.timedelta(hours=12) and now_timedelta <= datetime.timedelta(hours=18) :
+            now_timedelta = datetime.timedelta(hours=18)
+        elif now_timedelta > datetime.timedelta(hours=18) :
+            now_timedelta = datetime.timedelta(hours=6)
+        
+        return now_timedelta
     
 
     sql_insert_param = """
-    INSERT INTO parameter_data (temperature, humidity, start_date,stat_stepper,number_stepper)
-    VALUES (37.5, 45, %(start_date)s,'ON',2)"""
+        INSERT INTO parameter_data (temperature, humidity, start_date, stat_stepper, number_stepper, espece, timetoclose)
+        VALUES (37.5, 45, %(start_date)s, 'ON', 3, 'poule', 21)
+    """
 
 
     select_parameter = """
-    SELECT id
-    FROM parameter_data ORDER BY id DESC LIMIT 1
+        SELECT id
+        FROM parameter_data
+        ORDER BY id DESC
+        LIMIT 1
     """
 
     sql_update_param = """
         UPDATE parameter_data 
-        SET temperature = :temperature, humidity = :humidity, start_date = :start_date, 
-            stat_stepper = :stat_stepper, number_stepper = :number_stepper 
-        WHERE id = :id
+        SET temperature = %(temperature)s, humidity = %(humidity)s, start_date = %(start_date)s, 
+            stat_stepper = %(stat_stepper)s, number_stepper = %(number_stepper)s, espece = %(espece)s,
+            timetoclose = %(timetoclose)s
+        WHERE id = %(id)s
     """
 
-    select_stepper = """ SELECT id, start_date, status FROM stepper ORDER BY id DESC LIMIT 1 """
-    update_stepper = """UPDATE stepper SET start_date = :start_date, status = :status WHERE id = :id """
-    insert_stepper = """INSERT INTO stepper VALUES (:start_date, :status)"""
+    select_stepper = """ 
+        SELECT id, start_date, status 
+        FROM stepper 
+        ORDER BY id DESC 
+        LIMIT 1 
+    """
+
+    update_stepper = """ 
+        UPDATE stepper 
+        SET start_date = %(start_date)s, status = %(status)s 
+        WHERE id = %(id)s 
+    """
+
+    insert_stepper = """
+        INSERT INTO stepper (start_date, status)
+        VALUES (%(start_date)s, %(status)s)
+    """
 
     try : 
         conn = get_db_connection()
         cursor = conn.cursor()
+
         cursor.execute(select_parameter)
         id_result = cursor.fetchone()
-        
+
         cursor.execute(select_stepper)
         id_stepper = cursor.fetchone()
 
         if id_result :
-            sql_update_param['id'] = id_result[0]
+
+            data_to_insert['id'] = id_result[0]
             cursor.execute(sql_update_param,data_to_insert)
             conn.commit()
+
         else : 
             cursor.execute(sql_insert_param, {'start_date' : datetime.datetime.today()})
             conn.commit()
 
         if id_stepper :
-            now_timedelta = datetime.timedelta(hours=date_now.hour, minutes=date_now.minute, seconds=date_now.second)
-            if now_timedelta > datetime.timedelta(hours=0) and now_timedelta <= datetime.timedelta(hours=6) :
-                now_timedelta = datetime.timedelta(hours=6)
-            elif now_timedelta > datetime.timedelta(hours=6) and now_timedelta <= datetime.timedelta(hours=12) :
-                now_timedelta = datetime.timedelta(hours=12)
-            elif now_timedelta > datetime.timedelta(hours=12) and now_timedelta <= datetime.timedelta(hours=18) :
-                now_timedelta = datetime.timedelta(hours=18)
-            elif now_timedelta > datetime.timedelta(hours=18) :
-                now_timedelta = datetime.timedelta(hours=6)
 
-            update_stepper['id'] = id_stepper[0]
-            update_stepper['start_date'] = now_timedelta
-            update_stepper['status'] = data_to_insert['status']
-            cursor.execute(update_stepper)
+            now_timedelta = date_values()
+            status = data_to_insert['stat_stepper']
+            stepper_v = {
+                'id': id_stepper[0],
+                'start_date': now_timedelta,
+                'status': status
+            }
+
+            cursor.execute(update_stepper,stepper_v)
             conn.commit
         else :
-            insert_stepper['start_date'] = datetime.timedelta(hours=6)
-            insert_stepper['status'] = "ON"
-            cursor.execute(insert_stepper)
-            conn.commit
+            now_timedelta = date_values()
+            stepper_data = {
+                'start_date': now_timedelta,
+                'status': True
+            }
+            cursor.execute(insert_stepper, stepper_data)
+            conn.commit()
 
         cursor.close()
         conn.close()
@@ -375,7 +410,7 @@ def create_parameter(data_to_insert = None):
 def get_parameter() :
 
     select_parameter = """
-        SELECT id, temperature, humidity, start_date,stat_stepper,number_stepper 
+        SELECT id, temperature, humidity, start_date,stat_stepper,number_stepper, espece, timetoclose
         FROM parameter_data ORDER BY id DESC LIMIT 1 """
     
     # select_stepper = """ SELECT id, start_date, status FROM stepper ORDER BY id DESC LIMIT 1 """
@@ -407,7 +442,9 @@ def get_parameter() :
                 'humidity': id_result[2],
                 'start_date': str(id_result[3]),
                 'stat_stepper': id_result[4],
-                'number_stepper': id_result[5]
+                'number_stepper': id_result[5],
+                'espece' : id_result[6], 
+                'timetoclose' : id_result[7]
             }
         
         else : 
@@ -575,6 +612,63 @@ def login(user,password):
             return data[0]
         else :
             return False
+    except Exception as e:
+        print("Erreur lors de la récupération des données:", e)
+        return False
+    
+def getdateinit(date) :
+    sqldateinit = """
+        SELECT start_date, espece, timetoclose FROM parameter_data
+    """
+    try : 
+        conn = get_db_connection()  # Assume get_db_connection() returns a database connection
+        cursor = conn.cursor()
+        # Execute the queries
+        cursor.execute(sqldateinit )
+        data = cursor.fetchone()
+
+        if data:
+            try : 
+                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                today = datetime.date.today()
+                date_remain =   date - data[0]  
+                print(data[0] , date, type(data[0]), type(date))
+                days_v = 28 #PouleCanneOieCailleAutre
+                if data[1] == "poule" :
+                    days_v = 21
+                elif data[1] == "canne" :
+                    days_v = 28
+                elif data[1] == "oie" :
+                    days_v = 30
+                elif data[1] == "caille" :
+                    days_v = 18
+                else :
+                    days_v = data[2]
+
+                remain_time = datetime.timedelta(days=1)
+                days_remain = datetime.timedelta(days=days_v)
+                remain_now = today - data[0]
+
+                print( remain_now ,"gdgfgdgdgdg", days_remain)
+                print(remain_time,"rrrrrrr",date_remain)
+
+                if today < date :
+                    return False
+                
+                if date < data[0] : 
+                    return False
+
+                if date_remain > days_remain or date_remain < remain_time or remain_now > days_remain :
+                    return True # Retourner vrais si on peut lancer un nouveau processus
+                else :
+                    return False
+
+            except Exception as e:
+                print("Erreur lors de la récupération des données:", e)
+                return False
+            
+        else :
+            return True
     except Exception as e:
         print("Erreur lors de la récupération des données:", e)
         return False

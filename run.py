@@ -7,6 +7,7 @@ from apps import config_database
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import os
 from datetime import timedelta
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
 app = Flask(__name__)
@@ -18,6 +19,10 @@ api_keys = [
     {'key': 'Votre_Cle_API'},
     
 ]
+
+# Configuration de JWT
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+jwt = JWTManager(app)
 
 @app.route("/")
 def hello():
@@ -213,57 +218,185 @@ def get_all_data() :
         except Exception :
             return jsonify("Internal serveur error"), 500
         
+@app.route("/isrunning", methods=['GET','POST'])
+def getinitialdate() :
+    if request.method == 'POST':
+        # Vérifier si les données sont envoyées en JSON
+        if request.is_json:
+            data = request.get_json()
+            dateinit = data.get('date')
+        else:
+            # Sinon, traiter comme des données de formulaire
+            dateinit = request.form.get('date')
+        print(dateinit,"date")
 
-@app.route("/parameter", methods=['GET','POST'])
-def create_parameter() : 
+        if dateinit :
+            dateformated = 0
 
-    temperature = 0
-    humidity = 0
-    start_date = datetime.datetime.today() 
-    stat_stepper = "OFF"
-    number_stepper = 2
-    data = request.json
-    result = False
+            def checkdate():
+                try:
+                # Convertir la chaîne en objet datetime
+                    datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M:%S")
+                except ValueError:
+                    try:
+                        datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M")
+                    except ValueError:
+                        try:
+                            datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M")
+                        except ValueError:
+                            try:
+                                datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M:%S.%fZ")
+                            except ValueError:
+                                try:
+                                    datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d")
+                                except ValueError :
+                                    try:
+                                        datetime_obj = datetime.datetime.strptime(dateinit, '%d/%m/%Y %H:%M')
+                                    except ValueError:
+                                        try :
+                                            datetime_obj = datetime.datetime.strptime(dateinit, "%d/%m/%Y")
+                                        except ValueError :
+                                        # Si une ValueError est levée, ce n'est pas une date valide
+                                            return None
+                # Formater l'objet datetime dans le format souhaité
+                return datetime_obj.strftime("%Y-%m-%d")
+                                                                  
+            dateformated = checkdate()
+            is_ok = post_temp_humidity.getdateinit(dateformated)
+            return jsonify(is_ok), 202
+        else : 
+            return jsonify("Veillez renseigner la date"), 202
+    else : 
+        print ("NOK")
+
+@app.route("/parameter", methods=['GET', 'POST'])
+def create_parameter():
+
+    def fromateddate(dateinit):
+        try:
+            # Convertir la chaîne en objet datetime
+            datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            try:
+                datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d %H:%M")
+            except ValueError:
+                try:
+                    datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M")
+                except ValueError:
+                    try:
+                        datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    except ValueError:
+                        try:
+                            datetime_obj = datetime.datetime.strptime(dateinit, "%Y-%m-%d")
+                        except ValueError :
+                            try:
+                                datetime_obj = datetime.datetime.strptime(dateinit, '%d/%m/%Y %H:%M')
+                            except ValueError:
+                                try :
+                                    datetime_obj = datetime.datetime.strptime(dateinit, "%d/%m/%Y")
+                                except ValueError :
+                                    # Si une ValueError est levée, ce n'est pas une date valide
+                                    return dateinit
+                                    # return None
+        # Formater l'objet datetime dans le format souhaité
+        return datetime_obj.strftime("%Y-%m-%d %H:%M")
 
     api_key = request.headers.get('X-API-KEY')
-    # print(api_key)
 
     if not api_key:
         return jsonify({'message': 'API key missing'}), 401  # Unauthorized
 
-
     if not any(api['key'] == api_key for api in api_keys):
-        return jsonify({'message': 'Clé API non valide'}), 401  # Non autorisé
-    
-    if request.method == 'POST':
-        try :
-            temperature = float(data['temperature'])
-            humidity = float(data['humidity'])
-            start_date = data['start_date']
-            stat_stepper = data['stat_stepper']
-            number_stepper = data['number_stepper']
+        return jsonify({'message': 'Clé API non valide'}), 401  # Unauthorized
 
-        except Exception : 
-            return jsonify({'message': 'Missing data'}), 400  # Mauvaise requête
-        
-        data_to_insert = {
-            'temperature' : temperature,
-            'humidity' : humidity,
-            'start_date' : start_date,
-            'stat_stepper' : stat_stepper,
-            'number_stepper' : number_stepper
+    if request.method == 'POST':
+        try:
+            if request.is_json:
+                data = request.get_json()
+                # print(data, 1)
+            else:
+                data = request.form
+                # print(data, 2)
+
+            temperature = float(data.get('temperature'))
+            humidity = float(data.get('humidity'))
+            start_date = str(data.get('start_date'))
+            stat_stepper = data.get('stat_stepper')
+            number_stepper = data.get('number_stepper')
+            espece = data.get('espece')
+            timetoclose =  data.get('timetoclose')
+
+            # print(temperature,humidity,start_date,stat_stepper,number_stepper,espece,"ererererrerre")
+            print(type(start_date))
+
+            if not all([temperature, humidity, start_date, stat_stepper, number_stepper, espece]):
+                raise ValueError("Missing data")
+
+        except (TypeError, ValueError) as e:
+            return jsonify({'message': 'Invalid or missing data'}), 400  # Bad Request
+
+        espece_mapping = {
+            "option1": "poule",
+            "option2": "canne",
+            "option3": "oie",
+            "option4": "caille",
+            "option5": "other"
         }
 
-        post_temp_humidity.create_parameter(data_to_insert)
-        if result == True : 
+        remaindate = {
+            "poule" : 21,
+            "canne" : 28,
+            "oie" : 30,
+            "caille" : 18,
+            "other" : timetoclose
+        }
+
+        espece_value = espece_mapping.keys()
+        timetoclose_v = remaindate.keys()
+
+        if espece not in espece_value:
+            return jsonify({'message': 'Espece non reconnue'}), 401  # Unauthorized
+
+        espece_name = espece_mapping.get(espece)
+        dayclose = remaindate.get(espece_name)
+        try:
+            dayclose = int(dayclose)
+        except (TypeError, ValueError) as e :
+            dayclose = 28
+        # print(dayclose)
+
+        if dayclose < 0 :
+            dayclose = 28
+
+        formatted_date = fromateddate(start_date)
+        # print(formatted_date)
+
+        if not formatted_date:
+            return jsonify({'message': 'Invalid date format'}), 400  # Bad Request
+
+        data_to_insert = {
+            'temperature': temperature if temperature > 0 else 23 ,
+            'humidity': humidity if humidity > 0 else 40,
+            'start_date': formatted_date,
+            'stat_stepper': stat_stepper,
+            'number_stepper': number_stepper if number_stepper > 0 else 3,
+            'espece': espece_name,
+            'timetoclose' : dayclose
+        }
+
+        result = post_temp_humidity.create_parameter(data_to_insert)
+
+        if result:
             config_database.close_db_connection()
-            return jsonify({'message': 'Data received successfully'}), 200  # Succès
-        else :
-            return jsonify({'message': 'Internal Server Error'}),500 # Erreur
+            return jsonify({'message': 'Data received successfully'}), 200  # Success
+        else:
+            return jsonify({'message': 'Internal Server Error'}), 500  # Server Error
         
     else:
         result = post_temp_humidity.get_parameter()
-        return jsonify(result), 202 # Succès
+        return jsonify(result), 202  # Accepted
+
+
     
 @app.route('/templates/<path:filename>')
 def serve_templates(filename):
@@ -332,6 +465,14 @@ def login(extension=None):
             return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
     
     return render_template('login.html')
+
+@app.route('/check_session', methods=['GET'])
+def check_session():
+    if current_user.is_authenticated:
+        return jsonify({'is_authenticated': True})
+    else:
+        return jsonify({'is_authenticated': False})
+
 
 
 @app.route('/parametre')

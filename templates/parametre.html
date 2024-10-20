@@ -3,134 +3,210 @@
     <a href="{{ url_for('logout') }}">Se déconnecter</a> -->
 
 <!DOCTYPE html>
-<html style="font-size: 16px;" lang="fr"><head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8">
+    <title>Page Responsive avec Texte et Tableau</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <title>main</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}">
-    <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" defer=""></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" ></script>
-    <script class="u-script" type="text/javascript" src= "{{ url_for('static', filename='nicepage.js') }}" defer=""></script>
     <meta name="referrer" content="origin">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
-    <script src="{{ url_for('static', filename='highcharts/code/highcharts.js') }}"></script>
-    <script src= "{{ url_for('static', filename='highcharts/code/highcharts-more.js') }}" ></script>
-    <script src= "{{ url_for('static', filename='highcharts/code/modules/solid-gauge.js') }}" ></script>
-    <script src= "{{ url_for('static', filename='highcharts/code/modules/exporting.js') }}" ></script>
-    <script src= "{{ url_for('static', filename='highcharts/code/modules/export-data.js') }}" ></script>
-    <script src= "{{ url_for('static', filename='highcharts/code/modules/accessibility.js') }}" ></script>
-    <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
-    
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+    <style>
+        body {
+            background-color: rgba(41, 46, 51, 1);
+            color: white;
+        }
+        .content-section {
+            margin: 2% auto;
+            max-width: 1200px;
+        }
+        .table {
+            background-color: rgba(41, 46, 51, 1) !important;
+            color: white;
+            border-color: #beb2ea !important;
+        }
+        .table thead th {
+            background-color: rgba(41, 46, 51, 1) !important;
+            color: white;
+            border-color: #beb2ea;
+        }
+        .table td, .table th {
+          background-color: rgba(41, 46, 51, 1) !important;
+          color: white;
+            border-color: #beb2ea;
+        }
+        @media (max-width: 767px) {
+            .table-responsive-stack thead {
+                display: none;
+            }
+            .table-responsive-stack tr {
+                display: block;
+                margin-bottom: 1rem;
+            }
+            .table-responsive-stack td {
+                display: block;
+                width: 100%;
+            }
+            .table-responsive-stack td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                background-color: #555;
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+        .nav {
+            display: flex;
+            background-color:rgba(41, 46, 51, 1);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            margin: 2%;
+        }
 
-    <meta name="theme-color" content="#478ac9">
-    <meta property="og:title" content="main">
-    <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
-    <header>
-      <div class="section container-fluid container0" >
-        <div class="row">
-          <div class="col">
-            <nav class="section navbar navbar-expand-lg navbar-dark ">
-              <div class="container-fluid collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Accueil</a></li>
-                </ul>
-              </div>
-            </nav>
-          </div>
+        .nav a {
+            color: rgb(196, 196, 201)!important;
+            /* background-color: #beb2ea; */
+            padding: 10px;
+            text-decoration: none;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .nav a.active {
+            color: #eb1c1c;
+        }
+
+        .nav a:hover {
+            color: #777;
+        }
+        .box {
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
+  <header>
+    <div class="section container-fluid container0" >
+      <div class="row">
+        <div class="col">
+          <nav class="section navbar navbar-expand-lg navbar-dark ">
+            <div class="container-fluid collapse navbar-collapse">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Accueil</a></li>
+              </ul>
+            </div>
+          </nav>
         </div>
-        <div class="col-7"> <p>{{ current_user.id }}</p></div>
-        <div class="col"><p class="h6 text-light">Configuration</p></div>
       </div>
-      
+      <div class="col-8"></div>
+      <div class="col"><a href="{{ url_for('logout') }}">Se déconnecter</a></div>
+    </div>  
   </header> 
+    <div class="container">
+        <section class="custom-container">
+            <p class="text-center">
+              Voici une comparaison des paramètres d'incubation pour les œufs de canne, poule, oie et caille, ainsi que les informations sur la tolérance aux écarts par rapport aux conditions normales
+            </p>
+        </section>
 
-    <div class="section container-fluid" >
-      <div class="container">
-        <div class="box">
-          <div id = "Average-temp" class="container1"></div>
-        </div>
-        <div class="box">
-          <div id = "Average-Humid" class="container1"></div>
-        </div>
-        <div class="box">
-          <div id = "Max-Temp" class="container1"></div>
-        </div>
-        <div class="box">
-          <div id = "Max-Humid" class="container1"></div>
-        </div>
-    </div>
-    </div>
+        <section class="custom-container">
+            <div class="section container-fluid container0" >
+                    <nav class="nav navbar-expand-lg">
+                        <ul class=" me-auto mb-2 mb-lg-0">
+                          <li class="nav-item">
+                            <a class="nav-link"  href="#" id="google">Google</a>
+                        </li>
+                        </ul>
+                        <ul class=" me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                              <a class="nav-link"  href="#" id="gpt">GPT</a>
+                          </li>
+                          </ul>
+                          <ul class=" me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                              <a class="nav-link"  href="#" id="claude">Claude</a>
+                          </li>
+                          </ul>
+                    </nav>
+                  </div>
+                <div class="col-10"></div>
+        </section>
 
-    <div class="section container-fluid" >
+        <section class="custom-container container">
+            <div class="table-responsive">
+                <table class="table table-bordered table-responsive-stack" id="table-container">
+                    
+                </table>
+            </div>
+        </section>
 
-      <div id="line-labels" class = "container2"></div>
-    </div>
-
-    <div class="section container-fluid">
-        <div class="row">
-            <div class="col col-md-12">
-                <p>Voici une comparaison des paramètres d'incubation pour les œufs de canne, poule, oie et caille, ainsi que les informations sur la tolérance aux écarts par rapport aux conditions normales :</p>
+        <div class="section container-fluid" >
+          <form id="ParamForm">
+            <div class="container">
+              <div class="row">
+                <div cl></div>
+                <div class="box">
+                  <select class="form-select form-select-lg mb-3" aria-label="Large select example" id="data-select">
+                    <option value="option1" selected >Poule</option>
+                    <option value="option2">Canne</option>
+                    <option value="option3">Oie</option>
+                    <option value="option4">Caille</option>
+                    <option value="option5">Autre</option>
+                  </select>
+                </div>
               </div>
-        </div> 
-        
-        <div class="row">
-            <div class="col col-md-3">
-                <table class="table table-striped table-responsive table-responsive-sm">
-                    <thead>
-                      <tr class="table-primary">
-                        <th>Espèce</th>
-                        <th>Durée d'incubation (jours)</th>
-                        <th>Température normale (°C)</th>
-                        <th>Température max (°C)</th>
-                        <th>Température min (°C)</th>
-                        <th>Humidité normale (%)</th>
-                        <th>Humidité max (%)</th>
-                        <th>Humidité min (%)</th>
-                        <th>Tolérance °C %</th>
-                        <th>Tolérance (jours)</th>
-                      </tr>
-                    </thead>
-                    <tbody id="myTable">
-                      </tbody>
-                  </table>
+              
+              <div class="box">
+                <div class="input-group input-group-sm mb-3">
+                  <span class="input-group-text" id="temperature-label">Temperature</span>
+                  <input type="number" step= "any" max="50" min="1" required class="form-control" aria-label="Temperature" aria-describedby="temperature-label" id="temperature">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                  <span class="input-group-text" id="humidite-label">Humidite</span>
+                  <input type="number" step= "any" max="80" min="1" required class="form-control" aria-label="Humidite" aria-describedby="humidite-label" id="humidite">
+                </div>
               </div>
+              <div class="box">
+                <div id="Max-Temp">
+                  <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="date-debut-label">Date de début</span>
+                    <input type="datetime-local" class="form-control" required aria-label="Date de début" aria-describedby="date-debut-label" id="date-debut">
+                  </div>
+                  <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="retournement-label">Retournement</span>
+                    <input type="number" max="10" min="1" required class="form-control" aria-label="Retournement" aria-describedby="retournement-label" id="retournement">
+                  </div>
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                  <span class="input-group-text" id="dayclose-label">Jours d'éclosion</span>
+                  <input type="number" max="50" min="1" required  class="form-control" aria-label="eclosion" aria-describedby="dayclose-label" id="dayclose">
+                </div>
+              </div>
+              </div>
+              
+              <div class="box">
+                <button class="btn btn-primary btn-rounded"  id="login-btn" type="submit" style="background-color: #92aad0;">Enregistrer</button>
+              </div>
+              <div id="Message" style="color: red;"></div>
+            </div>
+          </form>
         </div>
+
         
-      </div>
-      
-      
     </div>
-    <div class="section section-4 container-fluid">
-      <table class="table table-striped table-responsive table-responsive-sm">
-        <thead>
-          <tr class="table-primary">
-            <th>Capteur</th>
-            <th>Date</th>
-            <th>Temperature</th>
-            <th>Humidite</th>
-            <th>Temperature moyenne</th>
-            <th>Humidite moyenne</th>
-            <th>Capteur failed</th>
-          </tr>
-        </thead>
-        <tbody id="myTable">
-          </tbody>
-      </table>
-      
-    </div>
-    <div class="section container-fluid">
-      <p class="text-light">&copy;Heriniaina</p>
-    </div>
-    <!-- <script src="{{ url_for('static', filename='login.js') }}"></script> -->
-  </body>
+
+    <script src= "{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
+    <script src="{{ url_for('static', filename='parametre.js') }}"></script>
+    <script src="{{ url_for('static', filename='validation.js') }}"></script>
+</body>
 </html>
-
-
