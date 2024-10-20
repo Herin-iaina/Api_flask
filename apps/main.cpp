@@ -3,6 +3,8 @@
 #include <ArduinoJson.h>
 #include <AccelStepper.h>
 #include "DHT.h"
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 
 // Pin Definitions
