@@ -348,7 +348,76 @@ void loop() {
   Serial.println(humidifierOn ? "ON" : "OFF");
   Serial.print("Failed Sensors : ");
   Serial.println(numFailedSensors);
+
+      // tempetarure moyenne
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Average T:");
+  lcd.print(avgTemperature, 1);
+  lcd.print("C");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Average H:");
+  lcd.print(avgHumidity, 1);
+  lcd.print("%");
+  delay(2000);
+
+      // Status restistance et humidifer
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Status R : ")
+  lcd.print(fanOn ? "ON" : "OFF")
+  lcd.setCursor(0, 1);
+  lcd.print("Status H : ")
+  lcd.print(humidifierOn ? "ON" : "OFF")
   
+    // Premier capteur
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S1 T:");
+  lcd.print(temperature_1, 1);
+  lcd.print("C");
+  lcd.setCursor(0, 1);
+  lcd.print("H:");
+  lcd.print(humidity_1, 1);
+  lcd.print("%");
+  delay(2000);
+
+    // Deuxième capteur
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S2 T:");
+  lcd.print(temperature_2, 1);
+  lcd.print("C");
+  lcd.setCursor(0, 1);
+  lcd.print("H:");
+  lcd.print(humidity_2, 1);
+  lcd.print("%");
+  delay(2000);
+
+  // Troisième capteur
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S3 T:");
+  lcd.print(temperature_3, 1);
+  lcd.print("C");
+  lcd.setCursor(0, 1);
+  lcd.print("H:");
+  lcd.print(humidity_3, 1);
+  lcd.print("%");
+  delay(2000);
+
+    // Quatrième capteur
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S4 T:");
+  lcd.print(temperature_4, 1);
+  lcd.print("C");
+  lcd.setCursor(0, 1);
+  lcd.print("H:");
+  lcd.print(humidity_4, 1);
+  lcd.print("%");
+  delay(2000);
 
   // Wait for the stepper motor to complete its movement
   while (stepper.isRunning()) {
